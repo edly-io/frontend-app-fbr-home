@@ -22,7 +22,7 @@ const useModalParams = () => {
       next.delete('modal');
       next.delete('id');
       return next;
-    });
+    }, { replace: true });
   }, [setSearchParams]);
 
   return {
