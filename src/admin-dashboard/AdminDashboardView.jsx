@@ -56,7 +56,7 @@ const AdminDashboardView = () => {
   const totalRequests = (s.pending_leave_requests ?? 0)
     + (s.pending_remote_requests ?? 0)
     + (s.pending_substitute_requests ?? 0);
-  const upcomingCount = data.upcoming_sessions?.length ?? 0;
+  const upcomingCount = s.upcoming_sessions ?? data.upcoming_sessions?.length ?? 0;
   const attendanceCount = s.pending_attendance_sessions ?? 0;
 
   const formatSessionDate = (iso) => new Date(iso).toLocaleDateString('en-GB', {
@@ -91,10 +91,10 @@ const AdminDashboardView = () => {
     {
       icon: School,
       value: upcomingCount,
-      label: 'Upcoming sessions',
+      label: 'Upcoming sessions (next 7 days)',
       variant: '--violet',
       scrollId: 'admin-upcoming-section',
-      showArrow: false,
+      showArrow: upcomingCount > 0,
     },
   ];
 
@@ -153,13 +153,13 @@ const AdminDashboardView = () => {
         <Card>
           <Card.Header
             title={<h2>Upcoming Sessions</h2>}
-            subtitle="Next scheduled sessions across your programmes"
+            subtitle="Sessions in the next 7 days across your programmes"
           />
           <Card.Section>
             {upcomingCount === 0 ? (
               <Alert variant="success">No sessions scheduled in the near future.</Alert>
             ) : (
-              <div className="admin-dashboard__session-list">
+              <div className="admin-dashboard__session-list dashboard-scroll-list">
                 {data.upcoming_sessions.map(session => (
                   <article className="admin-dashboard__session-row" key={session.session_id}>
                     <div>
@@ -170,7 +170,7 @@ const AdminDashboardView = () => {
                       </p>
                     </div>
                     <Link
-                      to={`/${session.program_key}/attendance${session.session_id ? `/sessions/${session.session_id}${session.course_id ? `?course_id=${encodeURIComponent(session.course_id)}` : ''}` : ''}`}
+                      to={`/${session.program_key}/calendar?modal=session&id=${encodeURIComponent(session.session_id)}`}
                       className="btn btn-outline-secondary btn-sm"
                     >
                       View →
@@ -189,6 +189,7 @@ const AdminDashboardView = () => {
             feedback={data.feedback ?? []}
             pendingCount={pendingCount}
             onOpenFeedback={setFeedbackRequestId}
+            expandable={false}
           />
         </Col>
         <Col xs={12} lg={5}>

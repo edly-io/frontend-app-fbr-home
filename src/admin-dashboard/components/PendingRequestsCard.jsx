@@ -8,6 +8,7 @@ import {
 } from '@openedx/paragon/icons';
 import { Link } from 'react-router-dom';
 
+// Fallback for a backend that still sends request rows instead of *_by_program counts.
 const groupByProgram = (requests) => {
   const groups = {};
   requests.forEach((r) => {
@@ -66,9 +67,10 @@ const PendingRequestsCard = ({ requests }) => {
   const substituteCount = requests?.substitute_count ?? 0;
   const total = leaveCount + remoteCount + substituteCount;
 
-  const leaveGroups = groupByProgram(requests?.leave_requests ?? []);
-  const remoteGroups = groupByProgram(requests?.remote_requests ?? []);
-  const substituteGroups = groupByProgram(requests?.substitute_requests ?? []);
+  const leaveGroups = requests?.leave_by_program ?? groupByProgram(requests?.leave_requests ?? []);
+  const remoteGroups = requests?.remote_by_program ?? groupByProgram(requests?.remote_requests ?? []);
+  const substituteGroups = requests?.substitute_by_program
+    ?? groupByProgram(requests?.substitute_requests ?? []);
 
   return (
     <Card>
@@ -115,11 +117,20 @@ const PendingRequestsCard = ({ requests }) => {
   );
 };
 
+const programCountShape = PropTypes.shape({
+  program_key: PropTypes.string.isRequired,
+  program_name: PropTypes.string,
+  count: PropTypes.number.isRequired,
+});
+
 PendingRequestsCard.propTypes = {
   requests: PropTypes.shape({
     leave_count: PropTypes.number,
     remote_session_count: PropTypes.number,
     substitute_count: PropTypes.number,
+    leave_by_program: PropTypes.arrayOf(programCountShape),
+    remote_by_program: PropTypes.arrayOf(programCountShape),
+    substitute_by_program: PropTypes.arrayOf(programCountShape),
     leave_requests: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string,
       program_key: PropTypes.string,
