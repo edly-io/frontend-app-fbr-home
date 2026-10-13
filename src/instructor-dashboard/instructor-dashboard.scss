@@ -404,11 +404,6 @@
   background: var(--sessions-surface);
   border-radius: .5rem;
   box-shadow: 0 .0625rem .25rem rgb(16 40 64 / .08), var(--sessions-card-ring);
-
-  svg {
-    width: 1rem;
-    height: 1rem;
-  }
 }
 
 .instructor-dashboard__course-progress {

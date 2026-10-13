@@ -10,11 +10,13 @@ import useExpandableList from '../../dashboard/useExpandableList';
 import messages from '../messages';
 import { formatDate } from '../utils';
 
-const FeedbackToSubmitCard = ({ feedback, pendingCount, onOpenFeedback }) => {
+const FeedbackToSubmitCard = ({
+  feedback, pendingCount, onOpenFeedback, expandable = true,
+}) => {
   const intl = useIntl();
   const {
     canExpand, isExpanded, toggleExpanded, visibleItems,
-  } = useExpandableList(feedback);
+  } = useExpandableList(feedback, expandable ? undefined : Infinity);
   const getIcon = item => {
     if (item.status === 'submitted') { return CheckCircle; }
     return item.type === 'course' ? MenuBook : Feedback;
@@ -103,6 +105,7 @@ FeedbackToSubmitCard.propTypes = {
   })).isRequired,
   pendingCount: PropTypes.number.isRequired,
   onOpenFeedback: PropTypes.func.isRequired,
+  expandable: PropTypes.bool,
 };
 
 export default FeedbackToSubmitCard;
