@@ -236,13 +236,16 @@ const CreateRequestModal = ({
     }
   };
 
-  // ── Leave usage projection ──
+  // ── Leave usage display ──
+  // The actual cost of this request can expand under the sandwich rule
+  // (weekends/holidays between leave days consume balance). Only the backend
+  // can compute it correctly, so we show the user's current usage here and
+  // defer any "would exceed" verdict to the 422 response.
 
   const ownUsage = leaveUsageData?.leaves?.[0] ?? null;
   const usageThreshold = leaveUsageData?.threshold ?? null;
-  const projectedCount = ownUsage !== null ? ownUsage.total_leaves_availed + 1 : null;
-  const wouldExceed = projectedCount !== null && usageThreshold !== null
-    && projectedCount > usageThreshold;
+  const alreadyAtOrOverThreshold = ownUsage !== null && usageThreshold !== null
+    && ownUsage.total_leaves_availed >= usageThreshold;
 
   // ── Validation ──
 
@@ -294,6 +297,23 @@ const CreateRequestModal = ({
     attachment: attachment || undefined,
   });
 
+  const extractAllSessionsOnDayError = (err) => {
+    // Backend's "please file a full-day leave" guard returns 400 with a
+    // DRF field-error on session_ids. Return the clean message when we see
+    // that exact shape so callers can skip the generic "field: msg" prefix
+    // extractApiError would otherwise produce.
+    if (err.response?.status !== 400) { return null; }
+    const sessionIdsErrors = err.response?.data?.session_ids;
+    if (!Array.isArray(sessionIdsErrors) || sessionIdsErrors.length === 0) {
+      return null;
+    }
+    const first = sessionIdsErrors[0];
+    if (typeof first !== 'string' || !first.toLowerCase().includes('full-day')) {
+      return null;
+    }
+    return first;
+  };
+
   const handleSubmit = async () => {
     setError('');
     setThresholdExceeded(null);
@@ -317,7 +337,8 @@ const CreateRequestModal = ({
       } else if (err.response?.status === 400 && err.response?.data?.error === 'overlapping_leave') {
         setOverlapConflict(err.response.data);
       } else {
-        setError(extractApiError(err, 'Failed to submit request'));
+        const allSessionsMsg = extractAllSessionsOnDayError(err);
+        setError(allSessionsMsg || extractApiError(err, 'Failed to submit request'));
       }
     } finally {
       setSubmitting(false);
@@ -337,7 +358,8 @@ const CreateRequestModal = ({
       if (err.response?.status === 400 && err.response?.data?.error === 'overlapping_leave') {
         setOverlapConflict(err.response.data);
       } else {
-        setError(extractApiError(err, 'Failed to submit request'));
+        const allSessionsMsg = extractAllSessionsOnDayError(err);
+        setError(allSessionsMsg || extractApiError(err, 'Failed to submit request'));
       }
     } finally {
       setSubmitting(false);
@@ -358,7 +380,8 @@ const CreateRequestModal = ({
       if (err.response?.status === 400 && err.response?.data?.error === 'overlapping_leave') {
         setOverlapConflict(err.response.data);
       } else {
-        setError(extractApiError(err, 'Failed to submit request'));
+        const allSessionsMsg = extractAllSessionsOnDayError(err);
+        setError(allSessionsMsg || extractApiError(err, 'Failed to submit request'));
       }
     } finally {
       setSubmitting(false);
@@ -487,10 +510,14 @@ const CreateRequestModal = ({
         <Alert variant="warning" className="mb-3">
           <strong>Leave threshold would be exceeded</strong>
           <p className="mb-1 mt-2" style={{ fontSize: 13 }}>{thresholdExceeded.detail}</p>
-          <small className="text-muted">
-            Current usage: {thresholdExceeded.current_usage} ·{' '}
-            This request: {thresholdExceeded.prospective_usage} ·{' '}
-            Threshold: {thresholdExceeded.threshold}
+          <small className="text-muted d-block">
+            Already used: <strong>{thresholdExceeded.current_usage}</strong> day(s) ·{' '}
+            This request would cost: <strong>{thresholdExceeded.prospective_usage}</strong> day(s) ·{' '}
+            Threshold: <strong>{thresholdExceeded.threshold}</strong> day(s)
+          </small>
+          <small className="text-muted d-block mt-1">
+            Weekends and public holidays between leave days also count toward
+            your balance.
           </small>
         </Alert>
       )}
@@ -592,17 +619,16 @@ const CreateRequestModal = ({
         </Form.Group>
       )}
 
-      {/* Leave usage projection banner */}
+      {/* Leave usage display */}
       {typeSlug === REQUEST_TYPE.LEAVE && ownUsage && usageThreshold !== null && (
         <Alert
-          variant={wouldExceed ? 'warning' : 'info'}
+          variant={alreadyAtOrOverThreshold ? 'warning' : 'info'}
           className="mb-3 py-2"
           style={{ fontSize: 13 }}
         >
           You have used <strong>{ownUsage.total_leaves_availed}</strong> of{' '}
           <strong>{usageThreshold}</strong> allowed leaves.
-          {' '}If approved, your total will be <strong>{projectedCount}</strong>.
-          {wouldExceed && ' This exceeds your leave threshold.'}
+          {alreadyAtOrOverThreshold && ' You are already at or over your threshold.'}
         </Alert>
       )}
 
