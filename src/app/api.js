@@ -101,7 +101,8 @@ export const getMyCertificate = async (programKey) => {
 
 export const getCertificateVerification = async (certificateNumber) => {
   // Public (no login): the certificate page is what a scanned QR code opens.
-  const url = `${getConfig().LMS_BASE_URL}/fbr/api/cms/certificates/verify/${certificateNumber}/`;
+  // Encoded: the number comes from the page URL, so it must stay one path segment.
+  const url = `${getConfig().LMS_BASE_URL}/fbr/api/cms/certificates/verify/${encodeURIComponent(certificateNumber)}/`;
   // Opt in to the rendered certificate and PDF link (left out by default).
   const { data } = await getHttpClient().get(url, { params: { include: 'certificate' } });
   return {

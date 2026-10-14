@@ -32,6 +32,17 @@ beforeEach(() => {
 });
 
 describe('getCertificateVerification', () => {
+  it('encodes the certificate number so a crafted link cannot reach another path', async () => {
+    mockClient.get.mockResolvedValue({ data: { valid: false, status: 'unknown' } });
+
+    await getCertificateVerification('../../../api/user/v1/me');
+
+    expect(mockClient.get).toHaveBeenCalledWith(
+      'http://localhost:18000/fbr/api/cms/certificates/verify/..%2F..%2F..%2Fapi%2Fuser%2Fv1%2Fme/',
+      { params: { include: 'certificate' } },
+    );
+  });
+
   it('asks the public verify endpoint to include the certificate and its PDF link', async () => {
     mockClient.get.mockResolvedValue({
       data: {
