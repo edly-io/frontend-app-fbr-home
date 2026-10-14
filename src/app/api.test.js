@@ -1,7 +1,8 @@
 import { getConfig } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { getAuthenticatedHttpClient, getHttpClient } from '@edx/frontend-platform/auth';
 
 import {
+  getCertificateVerification,
   getFeedbackDetail,
   getInstructorDashboard,
   getMyFbrRoles,
@@ -12,6 +13,7 @@ import {
 
 jest.mock('@edx/frontend-platform/auth', () => ({
   getAuthenticatedHttpClient: jest.fn(),
+  getHttpClient: jest.fn(),
 }));
 jest.mock('@edx/frontend-platform', () => ({
   getConfig: jest.fn(),
@@ -26,6 +28,34 @@ beforeEach(() => {
   jest.clearAllMocks();
   getConfig.mockReturnValue({ LMS_BASE_URL: 'http://localhost:18000' });
   getAuthenticatedHttpClient.mockReturnValue(mockClient);
+  getHttpClient.mockReturnValue(mockClient);
+});
+
+describe('getCertificateVerification', () => {
+  it('asks the public verify endpoint to include the certificate and its PDF link', async () => {
+    mockClient.get.mockResolvedValue({
+      data: {
+        valid: true,
+        status: 'active',
+        trainee_name: 'Imran Rashid',
+        program_name: 'Tax Administration Fundamentals',
+        issued_at: '2026-10-12T11:06:59Z',
+        html: '<div class="fbr-cert" />',
+        pdf_url: 'http://localhost:18000/fbr/api/integrations/v1/certificates/FBR-CERT-1/file/',
+      },
+    });
+
+    const verification = await getCertificateVerification('FBR-CERT-1');
+
+    expect(mockClient.get).toHaveBeenCalledWith(
+      'http://localhost:18000/fbr/api/cms/certificates/verify/FBR-CERT-1/',
+      { params: { include: 'certificate' } },
+    );
+    expect(verification).toMatchObject({
+      html: '<div class="fbr-cert" />',
+      pdfUrl: 'http://localhost:18000/fbr/api/integrations/v1/certificates/FBR-CERT-1/file/',
+    });
+  });
 });
 
 describe('getMyFbrRoles', () => {

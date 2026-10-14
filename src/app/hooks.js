@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   getPrograms, getProgramCourses, getLearnerCourseMap, getMyCertificate,
+  getCertificateVerification,
 } from './api';
 
 export const usePrograms = () => {
@@ -78,6 +79,31 @@ export const useMyCertificate = (programKey) => {
   return {
     certificate, loading, notFound, error,
   };
+};
+
+// Waits (no request) until a certificate number is known.
+export const useCertificateVerification = (certificateNumber) => {
+  const [verification, setVerification] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!certificateNumber) { return undefined; }
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await getCertificateVerification(certificateNumber);
+        if (!cancelled) { setVerification(data); }
+      } catch (err) {
+        if (!cancelled) { setError(err?.message || 'Failed to verify certificate'); }
+      } finally {
+        if (!cancelled) { setLoading(false); }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [certificateNumber]);
+
+  return { verification, loading, error };
 };
 
 export const useLearnerCourseMap = () => {

@@ -1,8 +1,7 @@
-// Trainee certificate page. The certificate document itself (`.fbr-cert`) is
-// styled by the backend template's inlined `<style>` (injected via the
-// shared `CertificateHtmlView`); only the page chrome lives here. Printing
-// is handled by the shared `PrintCertificateButton` (isolated iframe with
-// its own `@page`), so there are no print rules in this stylesheet.
+// Certificate pages (public verify page and the trainee's tab). The certificate
+// document itself (`.fbr-cert`) is styled by the backend template's inlined
+// `<style>` (injected via the shared `CertificateHtmlView`); only the page
+// chrome lives here. The PDF comes from the backend, so there are no print rules.
 
 .trainee-cert-page {
   max-width: 60rem;
@@ -37,4 +36,43 @@
   &__text {
     margin: 0;
   }
+}
+
+// Public certificate page: status summary above the certificate.
+.cert-verify-summary {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  margin-bottom: 1.5rem;
+
+  &__heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .75rem;
+  }
+}
+
+.cert-verify-details {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: .25rem 1.5rem;
+  margin: 0;
+
+  dt {
+    font-weight: normal;
+    color: #6C757D;
+  }
+
+  dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+.cert-verify-download {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: .25rem;
 }
