@@ -1,4 +1,4 @@
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { getAuthenticatedHttpClient, getHttpClient } from '@edx/frontend-platform/auth';
 import { getConfig } from '@edx/frontend-platform';
 
 export const getMyFbrRoles = async () => {
@@ -91,20 +91,40 @@ export const updateProgram = async (programKey, payload) => {
 };
 
 export const getMyCertificate = async (programKey) => {
-  // Served by the LMS (the fbr program_certificates app is mounted on both CMS
-  // and LMS under the same /fbr/api/cms/certificates/ path). Keyed to the
-  // requesting learner, so it returns only their own active certificate.
+  // The learner's own active certificate number for a program (LMS). Used to
+  // load the certificate for the program's Certificate tab.
   const client = getAuthenticatedHttpClient();
   const url = `${getConfig().LMS_BASE_URL}/fbr/api/cms/certificates/my/${programKey}/certificate/`;
   const { data } = await client.get(url);
+  return { certificateNumber: data.certificate_number };
+};
+
+export const getCertificateVerification = async (certificateNumber) => {
+  // Public (no login): the certificate page is what a scanned QR code opens.
+  // Encoded: the number comes from the page URL, so it must stay one path segment.
+  const url = `${getConfig().LMS_BASE_URL}/fbr/api/cms/certificates/verify/${encodeURIComponent(certificateNumber)}/`;
+  // Opt in to the rendered certificate and PDF link (left out by default).
+  const { data } = await getHttpClient().get(url, { params: { include: 'certificate' } });
   return {
-    html: data.html,
-    certificateNumber: data.certificate_number,
-    issuedAt: data.issued_at,
+    valid: data.valid,
     status: data.status,
-    programName: data.program_name,
     traineeName: data.trainee_name,
+    programName: data.program_name,
+    issuedAt: data.issued_at,
+    html: data.html,
+    pdfUrl: data.pdf_url,
   };
+};
+
+export const downloadCertificatePdf = async (pdfUrl, onProgress) => {
+  // Public file; fetched (not linked) so the page can show download progress.
+  const { data } = await getHttpClient().get(pdfUrl, {
+    responseType: 'blob',
+    onDownloadProgress: ({ loaded, total }) => {
+      if (total) { onProgress(Math.round((loaded / total) * 100)); }
+    },
+  });
+  return data;
 };
 
 export const getLearnerCourseMap = async () => {

@@ -20,6 +20,7 @@ import LocationsPage from '../locations/LocationsPage';
 import HolidaysPage from '../holidays/HolidaysPage';
 import ProgramCoursesPage from '../programs/ProgramCoursesPage';
 import ProgramCertificatePage from '../programs/ProgramCertificatePage';
+import CertificateVerifyPage from '../programs/CertificateVerifyPage';
 import DashboardPage from '../dashboard/DashboardPage';
 
 /**
@@ -47,6 +48,8 @@ export const SESSIONS_REQUESTS_PATH = '/:programId/requests';
 export const SESSIONS_ATTENDANCE_PATH = '/:programId/attendance';
 export const SESSIONS_COURSES_PATH = '/:programId/courses';
 export const SESSIONS_CERTIFICATE_PATH = '/:programId/certificate';
+// Public certificate page: what a scanned certificate QR code opens.
+export const SESSIONS_CERTIFICATE_VERIFY_PATH = '/verify/:certificateNumber';
 export const SESSIONS_LOCATIONS_PATH = '/:programId/locations';
 export const SESSIONS_HOLIDAYS_PATH = '/:programId/holidays';
 
@@ -81,6 +84,8 @@ export const sessionsAdminRoutes = (
     />
     <Route path={SESSIONS_COURSES_PATH} element={wrapInShell(ProgramCoursesPage)} />
     <Route path={SESSIONS_CERTIFICATE_PATH} element={wrapInShell(ProgramCertificatePage)} />
+    {/* No AuthGate: public page opened from a certificate's QR code. */}
+    <Route path={SESSIONS_CERTIFICATE_VERIFY_PATH} element={<PageWrap><CertificateVerifyPage /></PageWrap>} />
     <Route path={SESSIONS_CALENDAR_PATH} element={wrapInShell(CalendarPage)} />
     <Route path={SESSIONS_REQUESTS_PATH} element={wrapInShell(RequestsPage)}>
       <Route index element={<Navigate to="leaves" replace />} />
