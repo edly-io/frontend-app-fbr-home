@@ -31,7 +31,7 @@ const DashboardHero = ({ trainee, programme, programKey = undefined }) => {
         <div className="trainee-dashboard__identity" aria-label={intl.formatMessage(messages.traineeDetails)}>
           {trainee.roll_number && <Badge variant="light"><Icon src={Person} />{trainee.roll_number}</Badge>}
           <span className="trainee-dashboard__active-label">Active Programme:</span>
-          <Badge variant="light"><Icon src={MenuBook} />{programme.name}</Badge>
+          <Badge variant="light" className="program-badge"><Icon src={MenuBook} />{programme.name}</Badge>
           {programme.campus?.name && <Badge variant="light"><Icon src={LocationOn} />{programme.campus.name}</Badge>}
           {programKey && (
             <Link to={`/${programKey}/courses`} className="trainee-dashboard__hero-program-link">
