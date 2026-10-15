@@ -57,6 +57,12 @@
     background: var(--sessions-on-brand-fill);
     border: 0;
 
+    &.program-badge {
+      white-space: normal;
+      line-height: 1.2;
+      text-align: left;
+    }
+
     .pgn__icon {
       display: inline-flex;
       flex-shrink: 0;
