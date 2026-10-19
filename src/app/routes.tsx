@@ -28,16 +28,16 @@ import DashboardPage from '../dashboard/DashboardPage';
  * top-level `src/constants.ts` and `src/index.jsx` free of sessions-admin
  * specifics — the area owns its own paths.
  *
- * Paths are relative to the MFE basename (`PUBLIC_PATH=/sessions/`) which
+ * Paths are relative to the MFE basename (`PUBLIC_PATH=/fbr-home/`) which
  * `AppProvider`'s `<BrowserRouter basename>` strips before matching. So a
- * route declared `/` matches the URL `/sessions`, `/:programId/calendar`
- * matches `/sessions/<id>/calendar`, etc.
+ * route declared `/` matches the URL `/fbr-home`, `/:programId/calendar`
+ * matches `/fbr-home/<id>/calendar`, etc.
  */
-// Deprecated alias — old `/sessions/calendar` bookmarks (relative `/calendar`
+// Deprecated alias — old `/fbr-home/calendar` bookmarks (relative `/calendar`
 // under the MFE basename) redirect to the root programs list.
 export const LEGACY_CALENDAR_PATH = '/calendar';
 // Root: redirects to /dashboard.
-export const SESSIONS_ROOT_PATH = '/';
+export const FBR_HOME_ROOT_PATH = '/';
 // Programs list (moved from root).
 export const SESSIONS_PROGRAMS_PATH = '/programs';
 // Unified top-level dashboard (all roles).
@@ -72,10 +72,10 @@ export const sessionsAdminRoutes = (
   <>
     <Route
       path={LEGACY_CALENDAR_PATH}
-      element={<Navigate to={SESSIONS_ROOT_PATH} replace />}
+      element={<Navigate to={FBR_HOME_ROOT_PATH} replace />}
     />
     <Route
-      path={SESSIONS_ROOT_PATH}
+      path={FBR_HOME_ROOT_PATH}
       element={<Navigate to={SESSIONS_DASHBOARD_PATH} replace />}
     />
     <Route

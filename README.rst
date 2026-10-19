@@ -1,4 +1,4 @@
-frontend-app-sessions
+frontend-app-fbr-home
 #####################
 
 |license-badge|
@@ -6,7 +6,7 @@ frontend-app-sessions
 Purpose
 *******
 
-``frontend-app-sessions`` is the Open edX Sessions and Attendance MFE. It provides:
+``frontend-app-fbr-home`` is the Open edX Sessions and Attendance MFE. It provides:
 
 - A calendar view of scheduled live sessions (Zoom / Microsoft Teams)
 - Per-learner session request submission (remote Zoom join, leave requests)
@@ -63,7 +63,7 @@ Key variables in ``.env.development``:
 +==============================+===============================================+
 | ``PORT``                     | Dev server port (``2013``)                    |
 +------------------------------+-----------------------------------------------+
-| ``APP_ID``                   | MFE identifier (``sessions``)                 |
+| ``APP_ID``                   | MFE identifier (``fbr-home``)                 |
 +------------------------------+-----------------------------------------------+
 | ``LMS_BASE_URL``             | LMS host                                      |
 +------------------------------+-----------------------------------------------+
@@ -76,15 +76,15 @@ Routes
 +------------------------------------------+--------------------------------------+
 | Path                                     | Component                            |
 +==========================================+======================================+
-| ``/sessions``                            | Calendar (learner view)              |
+| ``/fbr-home``                            | Calendar (learner view)              |
 +------------------------------------------+--------------------------------------+
-| ``/sessions/:programId/calendar``        | Calendar scoped to a program         |
+| ``/fbr-home/:programId/calendar``        | Calendar scoped to a program         |
 +------------------------------------------+--------------------------------------+
-| ``/sessions/:programId/requests``        | Learner request list                 |
+| ``/fbr-home/:programId/requests``        | Learner request list                 |
 +------------------------------------------+--------------------------------------+
-| ``/sessions/:programId/attendance``      | Attendance reports (admin/instructor)|
+| ``/fbr-home/:programId/attendance``      | Attendance reports (admin/instructor)|
 +------------------------------------------+--------------------------------------+
-| ``/sessions/:programId/locations``       | Location management (admin)          |
+| ``/fbr-home/:programId/locations``       | Location management (admin)          |
 +------------------------------------------+--------------------------------------+
 
 Testing
