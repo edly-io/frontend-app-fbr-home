@@ -4,7 +4,7 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: "frontend-app-sessions"
+  name: "frontend-app-fbr-home"
   description: "Open edX Sessions and Attendance MFE"
   links:
     - url: "https://github.com/openedx/frontend-template-application/blob/master/README.rst"

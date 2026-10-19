@@ -1,10 +1,10 @@
 {
-  "name": "@edx/frontend-app-sessions",
+  "name": "@edx/frontend-app-fbr-home",
   "version": "0.1.0",
   "description": "Open edX Sessions MFE",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/edly-io/frontend-app-sessions.git"
+    "url": "git+https://github.com/edly-io/frontend-app-fbr-home.git"
   },
   "browserslist": [
     "extends @edx/browserslist-config"
