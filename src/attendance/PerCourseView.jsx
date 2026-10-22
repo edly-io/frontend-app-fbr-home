@@ -255,7 +255,7 @@ const PerCourseView = () => {
 
       {/* Server-paged table, for a course or for the programme's course-less
           events. It stays mounted while loading — unmounting would re-fire
-          Paragon's fetchData effect (see PerSessionReport). The spinner above
+          Paragon's fetchData effect. The spinner above
           renders alongside the table, not instead of it. */}
       {selectedCourseKey && (
         <DataTable

@@ -78,34 +78,6 @@ export const getMyCourseAttendance = async (programKey, courseKey, { page, pageS
 };
 
 /**
- * Past sessions across all courses, used by the admin sessions list.
- *
- * Calls `GET /fbr/api/attendance/v1/calendar-sessions/` with an explicit date
- * window. Pass `startDate`/`endDate` (Date objects) for precise control, or
- * fall back to `daysBack` for a window ending now. Calendar endpoint enforces
- * a 45-day max window.
- *
- * @param {Object}  opts
- * @param {number}  [opts.daysBack=30]  Window width when no explicit dates given.
- * @param {Date}    [opts.startDate]    Explicit window start (overrides daysBack).
- * @param {Date}    [opts.endDate]      Explicit window end (overrides now).
- */
-export const getPastSessionsForAttendance = async ({ daysBack = 30, startDate, endDate } = {}) => {
-  const client = getAuthenticatedHttpClient();
-  const end = endDate ?? new Date();
-  const start = startDate ?? new Date(end.getTime() - daysBack * 24 * 60 * 60 * 1000);
-  const params = new URLSearchParams({
-    start_date: start.toISOString(),
-    end_date: end.toISOString(),
-    attendance_only: '1',
-  });
-  const { data } = await client.get(
-    `${getBaseUrl()}/calendar-sessions/?${params}`,
-  );
-  return data;
-};
-
-/**
  * Past sessions in a program that belong to no course — programme-level events
  * such as seminars, workshops and conferences. Same scope, ordering (newest
  * first) and pagination as getCourseSessionsList.
@@ -125,19 +97,6 @@ export const getNoCourseSessionsList = async (programKey, { page, pageSize } = {
   if (pageSize) { params.set('page_size', String(pageSize)); }
   const { data } = await client.get(
     `${getBaseUrl()}/courses/sessions/?${params}`,
-  );
-  return data;
-};
-
-/**
- * Fetch a single session by ID.
- *
- * GET /fbr/api/attendance/v1/sessions/{session_id}/
- */
-export const getSession = async (sessionId) => {
-  const client = getAuthenticatedHttpClient();
-  const { data } = await client.get(
-    `${getBaseUrl()}/sessions/${sessionId}/`,
   );
   return data;
 };
