@@ -7,13 +7,19 @@ import {
   Alert, Badge, Button, Container, DataTable, Spinner,
 } from '@openedx/paragon';
 
-import { fetchProgramCourses } from '../calendar/api';
+import {
+  extractApiError,
+  fetchProgramCourses,
+  formatDateTime,
+  getStatusVariant,
+  MobileRowCard,
+  MobileRowCardsList,
+  MobileRowField,
+  SearchableSelect,
+  SESSION_STATUS_LABELS,
+  useIsBelowLg,
+} from '@edly-io/frontend-component-fbr';
 import { getCourseSessionsList, getNoCourseSessionsList } from './api';
-import SearchableSelect from '../shared/SearchableSelect';
-import { SESSION_STATUS_LABELS } from '../shared/constants';
-import { extractApiError, formatDateTime, getStatusVariant } from '../shared/utils';
-import { MobileRowCard, MobileRowCardsList, MobileRowField } from '../shared/MobileRowCards';
-import useIsBelowLg from '../shared/useIsBelowLg';
 
 const NO_COURSE_VALUE = '__none__';
 const PAGE_SIZE = 25;

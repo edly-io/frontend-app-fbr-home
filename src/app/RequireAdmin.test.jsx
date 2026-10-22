@@ -10,9 +10,12 @@ const jestDomMatchers = require('@testing-library/jest-dom/matchers');
 
 expect.extend(jestDomMatchers);
 
-jest.mock('./useConfig', () => ({ useConfig: jest.fn() }));
+jest.mock('@edly-io/frontend-component-fbr', () => ({
+  ...jest.requireActual('@edly-io/frontend-component-fbr'),
+  useConfig: jest.fn(),
+}));
 
-const { useConfig } = require('./useConfig');
+const { useConfig } = require('@edly-io/frontend-component-fbr');
 
 const wrap = () => render(
   <MemoryRouter>

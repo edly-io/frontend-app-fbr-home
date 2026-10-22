@@ -6,8 +6,8 @@ import {
   Alert, Button, Form, StandardModal,
 } from '@openedx/paragon';
 
+import { extractApiError } from '@edly-io/frontend-component-fbr';
 import { createLocation, updateLocation } from './api';
-import { extractApiError } from '../shared/utils';
 
 const emptyForm = { name: '', description: '', biometric_machine_serial_number: '' };
 

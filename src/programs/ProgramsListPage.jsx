@@ -7,12 +7,11 @@ import {
 } from '@openedx/paragon';
 import { FooterSlot } from '@edx/frontend-component-footer';
 import { getConfig } from '@edx/frontend-platform';
+import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import HeaderSlot from '../plugin-slots/HeaderSlot';
 import ProgramCard from './ProgramCard';
 import MyFeedbackSummaryCard from '../feedback/MyFeedbackSummaryCard';
 import { usePrograms } from '../app/hooks';
-import { useConfig } from '../app/useConfig';
-import { USER_ROLE } from '../shared/constants';
 
 const STATUS_OPTIONS = [
   { value: 'draft', label: 'Draft' },

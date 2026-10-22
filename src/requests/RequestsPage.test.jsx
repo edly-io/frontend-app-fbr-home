@@ -14,18 +14,22 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ programId: 'test-program' }),
 }));
 
-jest.mock('../app/useConfig', () => ({ useConfig: jest.fn() }));
+jest.mock('@edly-io/frontend-component-fbr', () => ({
+  ...jest.requireActual('@edly-io/frontend-component-fbr'),
+  useConfig: jest.fn(),
+  AuditLogTable: function MockAuditLogTable() {
+    return <div data-testid="audit-log-table">Audit Log</div>;
+  },
+  SessionLeavesPanel: function MockSessionLeavesPanel() { return null; },
+}));
 jest.mock('./AdminRequestsView', () => function MockAdminView() {
   return <div>AdminView</div>;
 });
 jest.mock('./LearnerRequestsView', () => function MockLearnerView() {
   return <div>LearnerView</div>;
 });
-jest.mock('../shared/AuditLogTable', () => function MockAuditLogTable() {
-  return <div data-testid="audit-log-table">Audit Log</div>;
-});
 
-const { useConfig } = require('../app/useConfig');
+const { useConfig } = require('@edly-io/frontend-component-fbr');
 
 const renderLayout = () => render(
   <IntlProvider locale="en" messages={{}}>

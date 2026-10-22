@@ -9,19 +9,23 @@ import {
 import { Download, InfoOutline } from '@openedx/paragon/icons';
 import { useQueryClient } from '@tanstack/react-query';
 
-import SearchableSelect from '../../shared/SearchableSelect';
-import { fetchProgramCourses } from '../../calendar/api';
-import { useConfig } from '../../app/useConfig';
+import {
+  extractApiError,
+  fetchProgramCourses,
+  MobileRowCard,
+  MobileRowCardsList,
+  MobileRowField,
+  SearchableSelect,
+  SectionHeading,
+  useConfig,
+  useIsBelowLg,
+} from '@edly-io/frontend-component-fbr';
 import {
   exportProgramAttendance,
   getAttendanceSettings,
   getCourseSummary,
   updateAttendanceSettings,
 } from '../api';
-import { extractApiError } from '../../shared/utils';
-import SectionHeading from '../../shared/SectionHeading';
-import { MobileRowCard, MobileRowCardsList, MobileRowField } from '../../shared/MobileRowCards';
-import useIsBelowLg from '../../shared/useIsBelowLg';
 import './CourseSummaryReport.scss';
 
 // ─── Cell renderers ──────────────────────────────────────────────────────────

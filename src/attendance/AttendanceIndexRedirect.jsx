@@ -1,7 +1,6 @@
 import React from 'react';
 import { Navigate, useParams } from 'react-router-dom';
-import { useConfig } from '../app/useConfig';
-import { USER_ROLE } from '../shared/constants';
+import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 
 const AttendanceIndexRedirect = () => {
   const { programId } = useParams();

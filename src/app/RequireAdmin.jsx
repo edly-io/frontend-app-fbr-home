@@ -10,8 +10,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Container, Spinner } from '@openedx/paragon';
 
-import { useConfig } from './useConfig';
-import { USER_ROLE } from '../shared/constants';
+import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import UnauthorizedPage from './UnauthorizedPage';
 
 const RequireAdmin = ({ children }) => {

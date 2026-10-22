@@ -12,16 +12,23 @@ import {
 import { ArrowBack, Edit } from '@openedx/paragon/icons';
 
 import {
+  ATTENDANCE_STATUS,
+  extractApiError,
+  formatDateTime,
+  getStatusVariant,
+  MobileRowCard,
+  MobileRowCardsList,
+  MobileRowField,
+  useConfig,
+  useIsBelowLg,
+  USER_ROLE,
+} from '@edly-io/frontend-component-fbr';
+import {
   getAttendanceRoster,
   markAttendance,
   syncSessionAttendance,
 } from './api';
-import { useConfig } from '../app/useConfig';
 import './attendance.scss';
-import { ATTENDANCE_STATUS, USER_ROLE } from '../shared/constants';
-import { extractApiError, formatDateTime, getStatusVariant } from '../shared/utils';
-import { MobileRowCard, MobileRowCardsList, MobileRowField } from '../shared/MobileRowCards';
-import useIsBelowLg from '../shared/useIsBelowLg';
 
 const PAGE_SIZE = 25;
 

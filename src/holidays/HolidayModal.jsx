@@ -6,9 +6,8 @@ import {
   Alert, Button, Form, StandardModal,
 } from '@openedx/paragon';
 
+import { DatepickerControl, extractApiError } from '@edly-io/frontend-component-fbr';
 import { createHoliday, updateHoliday } from './api';
-import { extractApiError } from '../shared/utils';
-import DatepickerControl from '../shared/date-picker-control/DatepickerControl';
 
 const emptyForm = {
   name: '', startDate: '', endDate: '', description: '',

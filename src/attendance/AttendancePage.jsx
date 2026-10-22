@@ -4,10 +4,8 @@ import {
   Navigate, Outlet, useParams, useSearchParams,
 } from 'react-router-dom';
 
-import { useConfig } from '../app/useConfig';
-import { USER_ROLE } from '../shared/constants';
+import { AuditLogTable, useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import AttendanceSubNav from './AttendanceSubNav';
-import AuditLogTable from '../shared/AuditLogTable';
 
 const AttendancePage = () => {
   const { programId } = useParams();

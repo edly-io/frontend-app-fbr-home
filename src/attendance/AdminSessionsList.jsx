@@ -8,9 +8,10 @@ import {
   ArrowBackIos, ArrowForwardIos, People, Search,
 } from '@openedx/paragon/icons';
 
+import {
+  extractApiError, formatDateTime, getStatusVariant, SESSION_STATUS_LABELS,
+} from '@edly-io/frontend-component-fbr';
 import { getPastSessionsForAttendance } from './api';
-import { extractApiError, formatDateTime, getStatusVariant } from '../shared/utils';
-import { SESSION_STATUS_LABELS } from '../shared/constants';
 
 const PAGE_SIZE = 25;
 const WINDOW_DAYS = 30;

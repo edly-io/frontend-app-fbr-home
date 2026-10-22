@@ -3,11 +3,13 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import {
   MemoryRouter, Route, Routes, useLocation,
 } from 'react-router-dom';
+import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import SectionNav from './SectionNav';
-import { useConfig } from './useConfig';
-import { USER_ROLE } from '../shared/constants';
 
-jest.mock('./useConfig', () => ({ useConfig: jest.fn() }));
+jest.mock('@edly-io/frontend-component-fbr', () => ({
+  ...jest.requireActual('@edly-io/frontend-component-fbr'),
+  useConfig: jest.fn(),
+}));
 
 const PROGRAM_ID = 'program-v1:FBR+DST+2025-B';
 

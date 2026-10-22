@@ -10,12 +10,16 @@ const jestDomMatchers = require('@testing-library/jest-dom/matchers');
 
 expect.extend(jestDomMatchers);
 
-jest.mock('../app/api', () => ({
+jest.mock('@edly-io/frontend-component-fbr', () => ({
+  ...jest.requireActual('@edly-io/frontend-component-fbr'),
   getProgram: jest.fn(),
+}));
+jest.mock('../app/api', () => ({
   updateProgram: jest.fn(),
 }));
 
-const { getProgram, updateProgram } = require('../app/api');
+const { getProgram } = require('@edly-io/frontend-component-fbr');
+const { updateProgram } = require('../app/api');
 
 const openModal = async () => {
   render(

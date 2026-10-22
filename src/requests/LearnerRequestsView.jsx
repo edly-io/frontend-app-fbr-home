@@ -8,25 +8,29 @@ import {
 } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
 
-import { getMyRequests, deleteRequest, withdrawRequest } from './api';
 import {
+  DatepickerControl,
+  extractApiError,
+  formatDateTime,
+  MobileRowCard,
+  MobileRowCardsList,
+  MobileRowField,
   REQUEST_STATUS,
   REQUEST_STATUS_LABELS,
   REQUEST_STATUS_VARIANTS,
   REQUEST_TYPE,
   REQUEST_TYPE_LABELS,
   REQUEST_TYPE_VARIANTS,
-} from '../shared/constants';
-import { extractApiError, formatDateTime } from '../shared/utils';
-import SectionHeading from '../shared/SectionHeading';
-import DatepickerControl from '../shared/date-picker-control/DatepickerControl';
+  RequestDetailCell,
+  RequestSummary,
+  SectionHeading,
+  useIsBelowLg,
+  useModalParams,
+} from '@edly-io/frontend-component-fbr';
+import { getMyRequests, deleteRequest, withdrawRequest } from './api';
 import './requests.scss';
 import CreateRequestModal from './CreateRequestModal';
-import RequestDetailCell, { RequestSummary } from './RequestDetailCell';
 import LeaveUsageSummary from './LeaveUsageSummary';
-import useModalParams from '../shared/useModalParams';
-import { MobileRowCard, MobileRowCardsList, MobileRowField } from '../shared/MobileRowCards';
-import useIsBelowLg from '../shared/useIsBelowLg';
 
 const PAGE_SIZE = 15;
 

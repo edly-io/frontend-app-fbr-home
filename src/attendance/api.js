@@ -2,6 +2,21 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getConfig } from '@edx/frontend-platform';
 
 const getBaseUrl = () => `${getConfig().LMS_BASE_URL}/fbr/api/attendance/v1`;
+const getProgramsBaseUrl = () => `${getConfig().STUDIO_BASE_URL}/fbr/api/programs`;
+
+/**
+ * Fetch all learners enrolled in a program.
+ *
+ * GET /fbr/api/programs/<program_key>/learners/?no_page
+ * Returns: [{ id, username, email, first_name, last_name }, ...]
+ */
+export const fetchProgramLearners = async (programKey) => {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.get(
+    `${getProgramsBaseUrl()}/${encodeURIComponent(programKey)}/learners/?no_page`,
+  );
+  return Array.isArray(data) ? data : (data.results ?? []);
+};
 
 /**
  * Bulk-upsert manual attendance for a session. Admin-only on the backend.

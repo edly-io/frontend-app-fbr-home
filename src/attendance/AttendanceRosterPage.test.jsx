@@ -3,8 +3,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { IntlProvider } from 'react-intl';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { USER_ROLE } from '@edly-io/frontend-component-fbr';
 import AttendanceRosterPage from './AttendanceRosterPage';
-import { USER_ROLE } from '../shared/constants';
 
 const jestDomMatchers = require('@testing-library/jest-dom/matchers');
 
@@ -16,12 +16,13 @@ jest.mock('./api', () => ({
   syncSessionAttendance: jest.fn(),
 }));
 
-jest.mock('../app/useConfig', () => ({
+jest.mock('@edly-io/frontend-component-fbr', () => ({
+  ...jest.requireActual('@edly-io/frontend-component-fbr'),
   useConfig: jest.fn(),
 }));
 
+const { useConfig } = require('@edly-io/frontend-component-fbr');
 const { getAttendanceRoster } = require('./api');
-const { useConfig } = require('../app/useConfig');
 
 const PROGRAM_ID = 'program-v1:Org+Test+2026';
 const SESSION_ID = 'session-uuid-1';

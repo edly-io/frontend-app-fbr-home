@@ -6,10 +6,14 @@ import {
   Alert, Badge, Container, DataTable, Spinner,
 } from '@openedx/paragon';
 
+import {
+  ATTENDANCE_STATUS,
+  extractApiError,
+  formatDateTime,
+  getStatusVariant,
+  SearchableSelect,
+} from '@edly-io/frontend-component-fbr';
 import { getAttendanceRoster, getPastSessionsForAttendance } from '../api';
-import SearchableSelect from '../../shared/SearchableSelect';
-import { ATTENDANCE_STATUS } from '../../shared/constants';
-import { extractApiError, formatDateTime, getStatusVariant } from '../../shared/utils';
 
 const PAGE_SIZE = 50;
 

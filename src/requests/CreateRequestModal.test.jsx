@@ -4,8 +4,8 @@ import {
 } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { IntlProvider } from 'react-intl';
+import { formatDateTime } from '@edly-io/frontend-component-fbr';
 import CreateRequestModal from './CreateRequestModal';
-import { formatDateTime } from '../shared/utils';
 
 // jest-dom v6 doesn't auto-extend when imported via babel-jest; extend manually.
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -13,21 +13,20 @@ const jestDomMatchers = require('@testing-library/jest-dom/matchers');
 
 expect.extend(jestDomMatchers);
 
-jest.mock('../calendar/api', () => ({
+jest.mock('@edly-io/frontend-component-fbr', () => ({
+  ...jest.requireActual('@edly-io/frontend-component-fbr'),
   getCalendarSessions: jest.fn().mockResolvedValue({ sessions: [] }),
   getProgramDates: jest.fn().mockResolvedValue([]),
+  getLeaveUsage: jest.fn().mockResolvedValue({ threshold: 7, leaves: [] }),
+  useConfig: () => ({ data: { user_role: 'learner' } }),
 }));
 jest.mock('./api', () => ({
   createRequest: jest.fn().mockResolvedValue({}),
-  getLeaveUsage: jest.fn().mockResolvedValue({ threshold: 7, leaves: [] }),
-}));
-jest.mock('../app/useConfig', () => ({
-  useConfig: () => ({ data: { user_role: 'learner' } }),
 }));
 
+const { getCalendarSessions } = require('@edly-io/frontend-component-fbr');
+const useConfigModule = require('@edly-io/frontend-component-fbr');
 const { createRequest } = require('./api');
-const { getCalendarSessions } = require('../calendar/api');
-const useConfigModule = require('../app/useConfig');
 
 const formatDateTimeWithAt = (value) => (
   formatDateTime(value).replace(/, (?=\d{1,2}:\d{2} [AP]M$)/, ' at ')

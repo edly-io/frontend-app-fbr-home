@@ -15,12 +15,13 @@ jest.mock('./api', () => ({
   getMyCourseAttendance: jest.fn(),
 }));
 
-jest.mock('../calendar/api', () => ({
+jest.mock('@edly-io/frontend-component-fbr', () => ({
+  ...jest.requireActual('@edly-io/frontend-component-fbr'),
   fetchProgramCourses: jest.fn(),
 }));
 
+const { fetchProgramCourses } = require('@edly-io/frontend-component-fbr');
 const { getMyCourseAttendance } = require('./api');
-const { fetchProgramCourses } = require('../calendar/api');
 
 const PROGRAM_ID = 'program-v1:Org+Test+2026';
 const COURSE_KEY = 'course-v1:Org+CS101+Run';

@@ -8,17 +8,6 @@ const getBaseUrl = () => `${getConfig().LMS_BASE_URL}/fbr/api/attendance/v1`;
 // to any authenticated user — the schedule modal needs them for its picker.
 // Mutations are admin-only (backend permission `IsAdminOrAuthenticatedReadOnly`).
 
-export const getLocations = async ({
-  search = '', page = 1, pageSize = 20, programKey = '',
-} = {}) => {
-  const client = getAuthenticatedHttpClient();
-  const params = new URLSearchParams({ page, page_size: pageSize });
-  if (search) { params.set('search', search); }
-  if (programKey) { params.set('program_key', programKey); }
-  const { data } = await client.get(`${getBaseUrl()}/locations/?${params}`);
-  return { count: data.count ?? 0, results: data.results ?? [] };
-};
-
 export const createLocation = async (payload) => {
   const client = getAuthenticatedHttpClient();
   const { data } = await client.post(`${getBaseUrl()}/locations/`, payload);

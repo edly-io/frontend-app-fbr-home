@@ -1,10 +1,9 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Spinner, Alert } from '@openedx/paragon';
+import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import CourseCard from './CourseCard';
 import { useProgramCourses, usePrograms, useLearnerCourseMap } from '../app/hooks';
-import { useConfig } from '../app/useConfig';
-import { USER_ROLE } from '../shared/constants';
 
 const ProgramCoursesPage = () => {
   const { programId } = useParams();

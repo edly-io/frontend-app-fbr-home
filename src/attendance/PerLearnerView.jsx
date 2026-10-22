@@ -10,14 +10,21 @@ import {
 
 import { Edit } from '@openedx/paragon/icons';
 
-import { getTraineeAttendance, markAttendance } from './api';
-import SearchableSelect from '../shared/SearchableSelect';
-import { fetchProgramCourses, fetchProgramLearners } from '../calendar/api';
-import { useConfig } from '../app/useConfig';
-import { ATTENDANCE_STATUS, USER_ROLE } from '../shared/constants';
-import { extractApiError, formatDateTime, getStatusVariant } from '../shared/utils';
-import { MobileRowCard, MobileRowCardsList, MobileRowField } from '../shared/MobileRowCards';
-import useIsBelowLg from '../shared/useIsBelowLg';
+import {
+  ATTENDANCE_STATUS,
+  extractApiError,
+  fetchProgramCourses,
+  formatDateTime,
+  getStatusVariant,
+  MobileRowCard,
+  MobileRowCardsList,
+  MobileRowField,
+  SearchableSelect,
+  useConfig,
+  useIsBelowLg,
+  USER_ROLE,
+} from '@edly-io/frontend-component-fbr';
+import { getTraineeAttendance, markAttendance, fetchProgramLearners } from './api';
 import './attendance.scss';
 
 const PAGE_SIZE = 50;

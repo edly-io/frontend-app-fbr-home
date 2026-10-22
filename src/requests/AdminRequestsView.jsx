@@ -8,31 +8,34 @@ import {
 } from '@openedx/paragon';
 
 import { Add } from '@openedx/paragon/icons';
-import { UserIdentity } from '@edly-io/frontend-component-fbr';
 import {
-  getRequests, reviewRequest, bulkApproveLeaves,
-} from './api';
-import {
+  DatepickerControl,
+  extractApiError,
+  formatDateTime,
+  formatLeaveRange,
+  isLeaveStartDatePast,
+  MobileRowCard,
+  MobileRowCardsList,
+  MobileRowField,
   REQUEST_STATUS,
   REQUEST_STATUS_LABELS,
   REQUEST_STATUS_VARIANTS,
   REQUEST_TYPE,
   REQUEST_TYPE_LABELS,
   REQUEST_TYPE_VARIANTS,
-} from '../shared/constants';
+  RequestDetailCell,
+  SectionHeading,
+  SessionLeavesPanel,
+  useIsBelowLg,
+  useModalParams,
+  UserIdentity,
+} from '@edly-io/frontend-component-fbr';
 import {
-  extractApiError, formatDateTime, isLeaveStartDatePast, formatLeaveRange,
-} from '../shared/utils';
-import SectionHeading from '../shared/SectionHeading';
-import DatepickerControl from '../shared/date-picker-control/DatepickerControl';
+  getRequests, reviewRequest, bulkApproveLeaves,
+} from './api';
 import './requests.scss';
-import RequestDetailCell from './RequestDetailCell';
 import CreateRequestModal from './CreateRequestModal';
-import useModalParams from '../shared/useModalParams';
 import LeaveUsagePanel from './LeaveUsagePanel';
-import SessionLeavesPanel from './SessionLeavesPanel';
-import { MobileRowCard, MobileRowCardsList, MobileRowField } from '../shared/MobileRowCards';
-import useIsBelowLg from '../shared/useIsBelowLg';
 
 const PAGE_SIZE = 15;
 

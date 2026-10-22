@@ -4,9 +4,9 @@ import userEvent from '@testing-library/user-event';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { IntlProvider } from 'react-intl';
 
+import { useConfig } from '@edly-io/frontend-component-fbr';
 import DashboardPage from './DashboardPage';
 import useMyFbrRoles from '../app/useMyFbrRoles';
-import { useConfig } from '../app/useConfig';
 
 const jestDomMatchers = require('@testing-library/jest-dom/matchers');
 
@@ -15,7 +15,10 @@ expect.extend(jestDomMatchers);
 jest.mock('../plugin-slots/HeaderSlot', () => () => null);
 jest.mock('@edx/frontend-component-footer', () => ({ FooterSlot: () => null }));
 jest.mock('../app/useMyFbrRoles');
-jest.mock('../app/useConfig');
+jest.mock('@edly-io/frontend-component-fbr', () => ({
+  ...jest.requireActual('@edly-io/frontend-component-fbr'),
+  useConfig: jest.fn(),
+}));
 jest.mock('../admin-dashboard/AdminDashboardView', () => function MockAdmin() { return <div>Admin dashboard</div>; });
 jest.mock('../instructor-dashboard/InstructorDashboardPage', () => function MockInstructor() { return <div>Instructor dashboard</div>; });
 jest.mock('../trainee-dashboard/TraineeDashboardPage', () => function MockTrainee() { return <div>Trainee dashboard</div>; });

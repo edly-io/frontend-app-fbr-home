@@ -5,26 +5,30 @@ import { useParams } from 'react-router-dom';
 import {
   Alert, Badge, Button, Col, Container, DataTable, Form, Row, Spinner,
 } from '@openedx/paragon';
-import { UserIdentity } from '@edly-io/frontend-component-fbr';
-
-import { useConfig } from '../app/useConfig';
 import {
+  cancelSession,
+  DatepickerControl,
+  extractApiError,
+  formatDateTime,
+  formatLeaveRange,
+  MobileRowCard,
+  MobileRowCardsList,
+  MobileRowField,
   SESSION_STATUS,
   SESSION_STATUS_LABELS,
   SUBSTITUTE_REQUEST_STATUS,
   SUBSTITUTE_REQUEST_STATUS_LABELS,
   SUBSTITUTE_REQUEST_STATUS_VARIANTS,
+  useConfig,
+  useIsBelowLg,
+  useModalParams,
   USER_ROLE,
-} from '../shared/constants';
-import { extractApiError, formatDateTime, formatLeaveRange } from '../shared/utils';
-import DatepickerControl from '../shared/date-picker-control/DatepickerControl';
+  UserIdentity,
+} from '@edly-io/frontend-component-fbr';
+
 import './requests.scss';
-import { cancelSession } from '../calendar/api';
 import { getSubstituteRequests, closeSubstituteRequest, getSubstituteRequest } from './api';
 import AssignSubstituteModal from './AssignSubstituteModal';
-import useModalParams from '../shared/useModalParams';
-import { MobileRowCard, MobileRowCardsList, MobileRowField } from '../shared/MobileRowCards';
-import useIsBelowLg from '../shared/useIsBelowLg';
 
 const PAGE_SIZE = 15;
 

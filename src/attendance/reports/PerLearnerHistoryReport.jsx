@@ -7,11 +7,15 @@ import {
   Alert, Badge, Container, DataTable, Spinner,
 } from '@openedx/paragon';
 
-import { getTraineeAttendance } from '../api';
-import SearchableSelect from '../../shared/SearchableSelect';
-import { fetchProgramCourses, fetchProgramLearners } from '../../calendar/api';
-import { ATTENDANCE_STATUS } from '../../shared/constants';
-import { extractApiError, formatDateTime, getStatusVariant } from '../../shared/utils';
+import {
+  ATTENDANCE_STATUS,
+  extractApiError,
+  fetchProgramCourses,
+  formatDateTime,
+  getStatusVariant,
+  SearchableSelect,
+} from '@edly-io/frontend-component-fbr';
+import { getTraineeAttendance, fetchProgramLearners } from '../api';
 
 const PAGE_SIZE = 50;
 

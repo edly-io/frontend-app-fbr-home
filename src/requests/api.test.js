@@ -5,12 +5,8 @@ import {
   withdrawRequest,
   getRequests,
   getMyRequests,
-  getApprovedLeaves,
   reviewRequest,
-  getLeaveUsage,
   bulkApproveLeaves,
-  getSessions,
-  getSessionApprovedLeaves,
 } from './api';
 
 jest.mock('@edx/frontend-platform/auth', () => ({
@@ -126,38 +122,6 @@ describe('withdrawRequest', () => {
   });
 });
 
-// ─── getApprovedLeaves ────────────────────────────────────────────────────────
-
-describe('getApprovedLeaves', () => {
-  it('always sends state=APPROVED', async () => {
-    mockClient.get.mockResolvedValue({ data: { results: [] } });
-    await getApprovedLeaves({ program_key: 'prog1' });
-    expect(mockClient.get).toHaveBeenCalledWith(
-      expect.stringContaining('state=APPROVED'),
-    );
-  });
-
-  it('includes program_key in query string', async () => {
-    mockClient.get.mockResolvedValue({ data: { results: [] } });
-    await getApprovedLeaves({ program_key: 'my-prog' });
-    expect(mockClient.get).toHaveBeenCalledWith(
-      expect.stringContaining('program_key=my-prog'),
-    );
-  });
-
-  it('returns results array from paginated response', async () => {
-    mockClient.get.mockResolvedValue({ data: { results: [{ id: 1 }] } });
-    const result = await getApprovedLeaves({});
-    expect(result).toEqual([{ id: 1 }]);
-  });
-
-  it('handles flat array response', async () => {
-    mockClient.get.mockResolvedValue({ data: [{ id: 2 }] });
-    const result = await getApprovedLeaves({});
-    expect(result).toEqual([{ id: 2 }]);
-  });
-});
-
 // ─── reviewRequest ────────────────────────────────────────────────────────────
 
 describe('reviewRequest', () => {
@@ -243,33 +207,6 @@ describe('getMyRequests', () => {
   });
 });
 
-describe('getLeaveUsage', () => {
-  it('GETs the leave-usage endpoint with program_key', async () => {
-    const usageData = { program_key: 'prog1', threshold: 7, leaves: [] };
-    mockClient.get.mockResolvedValue({ data: usageData });
-    const result = await getLeaveUsage({ program_key: 'prog1' });
-    expect(mockClient.get).toHaveBeenCalledWith(
-      expect.stringContaining('/leave-usage/'),
-    );
-    expect(mockClient.get).toHaveBeenCalledWith(
-      expect.stringContaining('program_key=prog1'),
-    );
-    expect(result).toEqual(usageData);
-  });
-
-  it('includes q param when provided', async () => {
-    mockClient.get.mockResolvedValue({ data: { threshold: 7, leaves: [] } });
-    await getLeaveUsage({ program_key: 'prog1', q: 'alice' });
-    expect(mockClient.get).toHaveBeenCalledWith(expect.stringContaining('q=alice'));
-  });
-
-  it('includes threshold_exceeded flag when threshold_exceeded param is true', async () => {
-    mockClient.get.mockResolvedValue({ data: { threshold: 7, leaves: [] } });
-    await getLeaveUsage({ program_key: 'prog1', threshold_exceeded: true });
-    expect(mockClient.get).toHaveBeenCalledWith(expect.stringContaining('threshold_exceeded'));
-  });
-});
-
 // ─── bulkApproveLeaves ────────────────────────────────────────────────────────
 
 describe('bulkApproveLeaves', () => {
@@ -285,66 +222,5 @@ describe('bulkApproveLeaves', () => {
       { program_key: 'prog1', leave_ids: ['uuid-1', 'uuid-2'] },
     );
     expect(result).toEqual(responseData);
-  });
-});
-
-// ─── getSessions ─────────────────────────────────────────────────────────────
-
-describe('getSessions', () => {
-  it('GETs the sessions endpoint with start_date, end_date, and program_key', async () => {
-    mockClient.get.mockResolvedValue({ data: { results: [{ id: 'sess1' }] } });
-    const result = await getSessions({
-      program_key: 'prog1',
-      start_date: '2026-01-01',
-      end_date: '2026-12-31',
-    });
-    expect(mockClient.get).toHaveBeenCalledWith(
-      expect.stringContaining('/sessions/'),
-    );
-    expect(mockClient.get).toHaveBeenCalledWith(
-      expect.stringContaining('program_key=prog1'),
-    );
-    expect(result).toEqual([{ id: 'sess1' }]);
-  });
-
-  it('handles a flat array response', async () => {
-    mockClient.get.mockResolvedValue({ data: [{ id: 'sess2' }] });
-    const result = await getSessions({ start_date: '2026-01-01', end_date: '2026-12-31' });
-    expect(result).toEqual([{ id: 'sess2' }]);
-  });
-});
-
-// ─── getSessionApprovedLeaves ─────────────────────────────────────────────────
-
-describe('getSessionApprovedLeaves', () => {
-  it('GETs the sessions/approved-leaves endpoint with program_key', async () => {
-    mockClient.get.mockResolvedValue({ data: { count: 0, results: [] } });
-    await getSessionApprovedLeaves({ program_key: 'prog1' });
-    expect(mockClient.get).toHaveBeenCalledWith(
-      expect.stringContaining('/sessions/approved-leaves/'),
-    );
-    expect(mockClient.get).toHaveBeenCalledWith(
-      expect.stringContaining('program_key=prog1'),
-    );
-  });
-
-  it('includes q, page, and page_size when provided', async () => {
-    mockClient.get.mockResolvedValue({ data: { count: 0, results: [] } });
-    await getSessionApprovedLeaves({
-      program_key: 'prog1', q: 'Math', page: 2, page_size: 15,
-    });
-    const [url] = mockClient.get.mock.calls[0];
-    expect(url).toContain('q=Math');
-    expect(url).toContain('page=2');
-    expect(url).toContain('page_size=15');
-  });
-
-  it('returns the full paginated envelope', async () => {
-    const envelope = {
-      count: 1, next: null, previous: null, results: [{ session_id: 's1' }],
-    };
-    mockClient.get.mockResolvedValue({ data: envelope });
-    const result = await getSessionApprovedLeaves({ program_key: 'prog1' });
-    expect(result).toEqual(envelope);
   });
 });

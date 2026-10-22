@@ -1,8 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Tab, Tabs } from '@openedx/paragon';
-import { USER_ROLE } from '../shared/constants';
-import { useConfig } from './useConfig';
+import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 
 const SECTIONS = [
   { slug: 'courses', label: 'Courses' },

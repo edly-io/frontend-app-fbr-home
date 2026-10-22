@@ -13,14 +13,19 @@ import {
   Add, DeleteOutline, EditOutline, History,
 } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
-import { getProgram } from '../app/api';
-import { getLocations, deleteLocation } from './api';
-import { extractApiError } from '../shared/utils';
+import {
+  AuditLogTable,
+  extractApiError,
+  getLocations,
+  getProgram,
+  MobileRowCard,
+  MobileRowCardsList,
+  MobileRowField,
+  useIsBelowLg,
+  useModalParams,
+} from '@edly-io/frontend-component-fbr';
+import { deleteLocation } from './api';
 import LocationModal from './LocationModal';
-import useModalParams from '../shared/useModalParams';
-import AuditLogTable from '../shared/AuditLogTable';
-import { MobileRowCard, MobileRowCardsList, MobileRowField } from '../shared/MobileRowCards';
-import useIsBelowLg from '../shared/useIsBelowLg';
 
 const DescriptionCell = ({ value }) => (
   value ? <span>{value}</span> : <span className="text-muted">—</span>
