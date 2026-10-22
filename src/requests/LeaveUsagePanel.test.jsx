@@ -10,11 +10,12 @@ const jestDomMatchers = require('@testing-library/jest-dom/matchers');
 
 expect.extend(jestDomMatchers);
 
-jest.mock('./api', () => ({
+jest.mock('@edly-io/frontend-component-fbr', () => ({
+  ...jest.requireActual('@edly-io/frontend-component-fbr'),
   getLeaveUsage: jest.fn(),
 }));
 
-const { getLeaveUsage } = require('./api');
+const { getLeaveUsage } = require('@edly-io/frontend-component-fbr');
 
 const USAGE_DATA = {
   program_key: 'prog1',

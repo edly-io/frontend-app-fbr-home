@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Alert, Spinner } from '@openedx/paragon';
-import { getLeaveUsage } from './api';
-import { extractApiError } from '../shared/utils';
+import {
+  extractApiError, getLeaveUsage, useConfig, USER_ROLE,
+} from '@edly-io/frontend-component-fbr';
 import './requests.scss';
-import { useConfig } from '../app/useConfig';
-import { USER_ROLE } from '../shared/constants';
 
 const LeaveUsageSummary = ({ programKey }) => {
   const { data: config } = useConfig();

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { defineMessages, useIntl } from '@edx/frontend-platform/i18n';
 import { Tab, Tabs } from '@openedx/paragon';
 
-import { FBR_ROLE } from '../shared/constants';
+import { FBR_ROLE } from '@edly-io/frontend-component-fbr';
 
 const messages = defineMessages({
   traineeProfile: {

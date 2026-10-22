@@ -9,9 +9,12 @@ const jestDomMatchers = require('@testing-library/jest-dom/matchers');
 
 expect.extend(jestDomMatchers);
 
-jest.mock('../app/useConfig', () => ({ useConfig: jest.fn() }));
+jest.mock('@edly-io/frontend-component-fbr', () => ({
+  ...jest.requireActual('@edly-io/frontend-component-fbr'),
+  useConfig: jest.fn(),
+}));
 
-const { useConfig } = require('../app/useConfig');
+const { useConfig } = require('@edly-io/frontend-component-fbr');
 
 const wrap = (userRole) => {
   useConfig.mockReturnValue({ data: { user_role: userRole } });

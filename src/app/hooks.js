@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
+import { fetchProgramCourses } from '@edly-io/frontend-component-fbr';
 import {
-  getPrograms, getProgramCourses, getLearnerCourseMap, getMyCertificate,
+  getPrograms,
+  getLearnerCourseMap,
+  getMyCertificate,
   getCertificateVerification,
 } from './api';
 
@@ -37,7 +40,7 @@ export const useProgramCourses = (programKey) => {
     let cancelled = false;
     (async () => {
       try {
-        const data = await getProgramCourses(programKey);
+        const data = await fetchProgramCourses(programKey);
         if (!cancelled) { setCourses(data); }
       } catch (err) {
         if (!cancelled) { setError(err?.message || 'Failed to load courses'); }

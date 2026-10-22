@@ -10,12 +10,17 @@ import {
 } from '@openedx/paragon';
 import { Add, DeleteOutline, EditOutline } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
-import { getHolidays, deleteHoliday } from './api';
-import { extractApiError } from '../shared/utils';
+import {
+  extractApiError,
+  getHolidays,
+  MobileRowCard,
+  MobileRowCardsList,
+  MobileRowField,
+  useIsBelowLg,
+  useModalParams,
+} from '@edly-io/frontend-component-fbr';
+import { deleteHoliday } from './api';
 import HolidayModal from './HolidayModal';
-import useModalParams from '../shared/useModalParams';
-import { MobileRowCard, MobileRowCardsList, MobileRowField } from '../shared/MobileRowCards';
-import useIsBelowLg from '../shared/useIsBelowLg';
 
 const fmt = (d) => new Date(`${d}T00:00:00`).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 

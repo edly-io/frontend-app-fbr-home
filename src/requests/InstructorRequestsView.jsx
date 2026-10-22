@@ -2,9 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Container } from '@openedx/paragon';
 import { useParams } from 'react-router-dom';
-import { REQUEST_TYPE } from '../shared/constants';
+import { REQUEST_TYPE, SessionLeavesPanel } from '@edly-io/frontend-component-fbr';
 import LearnerRequestsView from './LearnerRequestsView';
-import SessionLeavesPanel from './SessionLeavesPanel';
 
 const InstructorRequestsView = ({ lockedType }) => {
   const { programId } = useParams();

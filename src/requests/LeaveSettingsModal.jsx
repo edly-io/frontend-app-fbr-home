@@ -4,7 +4,8 @@ import {
   Alert, Button, Spinner, StandardModal, useToggle,
 } from '@openedx/paragon';
 import { Settings } from '@openedx/paragon/icons';
-import { getProgram, updateProgram } from '../app/api';
+import { getProgram } from '@edly-io/frontend-component-fbr';
+import { updateProgram } from '../app/api';
 import ThresholdControl from './ThresholdControl';
 
 // "Leave settings" header button + modal. Loads the program's threshold when

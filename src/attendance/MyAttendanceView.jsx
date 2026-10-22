@@ -7,11 +7,15 @@ import {
   Alert, Badge, Container, DataTable, Spinner,
 } from '@openedx/paragon';
 
+import {
+  ATTENDANCE_STATUS,
+  extractApiError,
+  fetchProgramCourses,
+  formatDateTime,
+  getStatusVariant,
+  SearchableSelect,
+} from '@edly-io/frontend-component-fbr';
 import { getMyCourseAttendance } from './api';
-import { fetchProgramCourses } from '../calendar/api';
-import SearchableSelect from '../shared/SearchableSelect';
-import { ATTENDANCE_STATUS } from '../shared/constants';
-import { extractApiError, formatDateTime, getStatusVariant } from '../shared/utils';
 
 const PAGE_SIZE = 25;
 const NO_COURSE_VALUE = '__none__';
@@ -190,7 +194,7 @@ const MyAttendanceView = () => {
 
       {/* Server-paged table, for a course or for the programme's course-less
           events. It stays mounted while loading — unmounting would re-fire
-          Paragon's fetchData effect (see PerSessionReport). The spinner above
+          Paragon's fetchData effect. The spinner above
           renders alongside the table, not instead of it. */}
       {selectedCourseId && (
         <DataTable

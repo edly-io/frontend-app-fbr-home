@@ -5,11 +5,16 @@ import {
 } from '@openedx/paragon';
 
 import {
-  updateSession, fetchProgramCourses, fetchProgramInstructors, cancelSession,
-} from '../calendar/api';
-import { assignSubstitute, closeSubstituteRequest, getApprovedLeaves } from './api';
-import { extractApiError, formatDateTime } from '../shared/utils';
-import SearchableSelect from '../shared/SearchableSelect';
+  cancelSession,
+  extractApiError,
+  fetchProgramCourses,
+  fetchProgramInstructors,
+  formatDateTime,
+  getApprovedLeaves,
+  SearchableSelect,
+  updateSession,
+} from '@edly-io/frontend-component-fbr';
+import { assignSubstitute, closeSubstituteRequest } from './api';
 
 const formatInstructorLabel = (i) => {
   const fullName = `${i.first_name || ''} ${i.last_name || ''}`.trim();

@@ -2,14 +2,14 @@ import React from 'react';
 import { Route, Navigate } from 'react-router-dom';
 import { PageWrap } from '@edx/frontend-platform/react';
 
-import CalendarPage from '../calendar/CalendarPage';
+import { REQUEST_TYPE } from '@edly-io/frontend-component-fbr';
+import CalendarRoute from '../calendar/CalendarRoute';
 import AuthGate from './AuthGate';
 import RequireAdmin from './RequireAdmin';
 import SessionsAdminLayout from './SessionsAdminLayout';
 import SessionsLanding from './SessionsLanding';
 import RequestsPage, { RequestsTabPage } from '../requests/RequestsPage';
 import SubstituteRequestsView from '../requests/SubstituteRequestsView';
-import { REQUEST_TYPE } from '../shared/constants';
 import AttendancePage from '../attendance/AttendancePage';
 import AttendanceIndexRedirect from '../attendance/AttendanceIndexRedirect';
 import AttendanceRosterPage from '../attendance/AttendanceRosterPage';
@@ -101,7 +101,7 @@ export const sessionsAdminRoutes = (
     <Route path={SESSIONS_CERTIFICATE_PATH} element={wrapInShell(ProgramCertificatePage)} />
     {/* No AuthGate: public page opened from a certificate's QR code. */}
     <Route path={SESSIONS_CERTIFICATE_VERIFY_PATH} element={<PageWrap><CertificateVerifyPage /></PageWrap>} />
-    <Route path={SESSIONS_CALENDAR_PATH} element={wrapInShell(CalendarPage)} />
+    <Route path={SESSIONS_CALENDAR_PATH} element={wrapInShell(CalendarRoute)} />
     <Route path={SESSIONS_REQUESTS_PATH} element={wrapInShell(RequestsPage)}>
       <Route index element={<Navigate to="leaves" replace />} />
       <Route path="leaves" element={<RequestsTabPage lockedType={REQUEST_TYPE.LEAVE} />} />

@@ -9,12 +9,15 @@ const jestDomMatchers = require('@testing-library/jest-dom/matchers');
 
 expect.extend(jestDomMatchers);
 
-jest.mock('./api', () => ({
+jest.mock('@edly-io/frontend-component-fbr', () => ({
+  ...jest.requireActual('@edly-io/frontend-component-fbr'),
   getHolidays: jest.fn(),
+}));
+jest.mock('./api', () => ({
   deleteHoliday: jest.fn(),
 }));
 
-const { getHolidays } = require('./api');
+const { getHolidays } = require('@edly-io/frontend-component-fbr');
 
 const wrap = () => render(
   <MemoryRouter>

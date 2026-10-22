@@ -6,17 +6,20 @@ import {
   Alert, Button, Form, Spinner, StandardModal,
 } from '@openedx/paragon';
 
-import { getCalendarSessions, getProgramDates } from '../calendar/api';
-import { createRequest, getLeaveUsage } from './api';
 import {
+  DatepickerControl,
+  extractApiError,
+  formatDateTime,
+  getCalendarSessions,
+  getLeaveUsage,
+  getProgramDates,
+  REQUEST_STATUS_LABELS,
   REQUEST_TYPE,
   REQUEST_TYPE_LABELS,
-  REQUEST_STATUS_LABELS,
+  useConfig,
   USER_ROLE,
-} from '../shared/constants';
-import { extractApiError, formatDateTime } from '../shared/utils';
-import DatepickerControl from '../shared/date-picker-control/DatepickerControl';
-import { useConfig } from '../app/useConfig';
+} from '@edly-io/frontend-component-fbr';
+import { createRequest } from './api';
 
 const TYPE_OPTIONS = [
   { value: REQUEST_TYPE.REMOTE_SESSION, label: REQUEST_TYPE_LABELS[REQUEST_TYPE.REMOTE_SESSION] },

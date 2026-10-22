@@ -9,11 +9,10 @@ import {
 import { FooterSlot } from '@edx/frontend-component-footer';
 import { Badge, Container } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
+import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import HeaderSlot from '../plugin-slots/HeaderSlot';
 import SectionNav from './SectionNav';
 import { usePrograms } from './hooks';
-import { useConfig } from './useConfig';
-import { USER_ROLE } from '../shared/constants';
 
 const STATUS_VARIANTS = {
   active: 'success',

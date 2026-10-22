@@ -3,11 +3,15 @@ import PropTypes from 'prop-types';
 import {
   Alert, Button, Col, DataTable, Form, Row, Spinner,
 } from '@openedx/paragon';
-import { UserIdentity } from '@edly-io/frontend-component-fbr';
-import { getLeaveUsage } from './api';
-import { extractApiError } from '../shared/utils';
-import { MobileRowCard, MobileRowCardsList, MobileRowField } from '../shared/MobileRowCards';
-import useIsBelowLg from '../shared/useIsBelowLg';
+import {
+  extractApiError,
+  getLeaveUsage,
+  MobileRowCard,
+  MobileRowCardsList,
+  MobileRowField,
+  useIsBelowLg,
+  UserIdentity,
+} from '@edly-io/frontend-component-fbr';
 import './requests.scss';
 
 const FILTER_OPTIONS = [

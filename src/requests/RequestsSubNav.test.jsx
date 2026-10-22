@@ -2,18 +2,23 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
+import { USER_ROLE } from '@edly-io/frontend-component-fbr';
 import RequestsSubNav from './RequestsSubNav';
-import { USER_ROLE } from '../shared/constants';
 
 const jestDomMatchers = require('@testing-library/jest-dom/matchers');
 
 expect.extend(jestDomMatchers);
 
-jest.mock('./api', () => ({ getRequestCounts: jest.fn() }));
-jest.mock('../app/useConfig', () => ({ useConfig: jest.fn() }));
+jest.mock('@edly-io/frontend-component-fbr', () => ({
+  ...jest.requireActual('@edly-io/frontend-component-fbr'),
+  useConfig: jest.fn(),
+}));
+jest.mock('./api', () => ({
+  getRequestCounts: jest.fn(),
+}));
 
+const { useConfig } = require('@edly-io/frontend-component-fbr');
 const { getRequestCounts } = require('./api');
-const { useConfig } = require('../app/useConfig');
 
 const PROGRAM = 'program-v1:FBR+STP+2026-A';
 

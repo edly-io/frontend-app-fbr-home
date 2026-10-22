@@ -16,19 +16,19 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ programId: 'test-program' }),
 }));
 
+jest.mock('@edly-io/frontend-component-fbr', () => ({
+  ...jest.requireActual('@edly-io/frontend-component-fbr'),
+  getLeaveUsage: jest.fn().mockResolvedValue({ threshold: 5, leaves: [] }),
+  getProgram: jest.fn().mockResolvedValue({ threshold: 5 }),
+  SessionLeavesPanel: function MockSessionLeavesPanel() { return null; },
+}));
 jest.mock('./api', () => ({
   getRequests: jest.fn(),
   reviewRequest: jest.fn().mockResolvedValue({ id: '1', state: 'APPROVED' }),
   bulkApproveLeaves: jest.fn(),
-  getLeaveUsage: jest.fn().mockResolvedValue({ threshold: 5, leaves: [] }),
-}));
-
-jest.mock('../app/api', () => ({
-  getProgram: jest.fn().mockResolvedValue({ threshold: 5 }),
 }));
 
 jest.mock('./CreateRequestModal', () => function MockCreateRequestModal() { return null; });
-jest.mock('./SessionLeavesPanel', () => function MockSessionLeavesPanel() { return null; });
 
 const { getRequests, reviewRequest, bulkApproveLeaves } = require('./api');
 

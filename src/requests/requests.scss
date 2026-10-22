@@ -45,25 +45,6 @@
     }
   }
 
-  &__leave-list {
-    padding-left: 20px;
-    margin: 0;
-  }
-
-  &__leave-item {
-    margin-bottom: 10px;
-  }
-
-  // Paragon's `text-warning` is a pure yellow that fails on white, so the
-  // original amber is kept here.
-  &__leave-count--some {
-    color: var(--sessions-text-warning);
-  }
-
-  &__leave-count--none {
-    color: var(--sessions-text-muted);
-  }
-
   &__usage-meter {
     width: 100%;
     max-width: 120px;

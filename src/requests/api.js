@@ -63,25 +63,6 @@ export const withdrawRequest = async (requestId) => {
 };
 
 /**
- * Fetch leave usage for a program.
- * Admin gets all trainees; learner/instructor gets own row only.
- *
- * GET /v1/leave-usage/?program_key=…
- */
-export const getLeaveUsage = async ({
-  // eslint-disable-next-line camelcase
-  program_key, q, threshold_exceeded,
-}) => {
-  const client = getAuthenticatedHttpClient();
-  const params = new URLSearchParams({ program_key });
-  if (q) { params.set('q', q); }
-  // eslint-disable-next-line camelcase
-  if (threshold_exceeded) { params.set('threshold_exceeded', ''); }
-  const { data } = await client.get(`${getBaseUrl()}/leave-usage/?${params}`);
-  return data;
-};
-
-/**
  * Admin bulk-approves a set of pending leave requests.
  *
  * POST /v1/requests/leave/bulk-approve/
@@ -137,69 +118,6 @@ export const getRequests = fetchRequests;
  * Alias of getRequests.
  */
 export const getMyRequests = fetchRequests;
-
-/**
- * Fetch all APPROVED leave requests for the authenticated learner.
- * Used by CalendarPage to hydrate the studentRequestMap for leave display.
- *
- * GET /v1/requests/leave/?state=APPROVED&program_key=…
- */
-export const getApprovedLeaves = async ({
-  // eslint-disable-next-line camelcase
-  program_key,
-} = {}) => {
-  const client = getAuthenticatedHttpClient();
-  const params = new URLSearchParams({ state: 'APPROVED', page_size: '200' });
-  if (program_key) { params.set('program_key', program_key); }
-  const { data } = await client.get(`${leaveUrl()}?${params.toString()}`);
-  const results = Array.isArray(data) ? data : data.results ?? [];
-  return results;
-};
-
-/**
- * Fetch sessions within a date range, scoped to the authenticated user's role.
- * Used by the instructor leave panel to cross-reference approved leaves.
- *
- * GET /v1/sessions/?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD[&program_key=…]
- */
-export const getSessions = async ({
-  // eslint-disable-next-line camelcase
-  program_key, start_date, end_date,
-} = {}) => {
-  const client = getAuthenticatedHttpClient();
-  // eslint-disable-next-line camelcase
-  const params = new URLSearchParams({ start_date, end_date });
-  // eslint-disable-next-line camelcase
-  if (program_key) { params.set('program_key', program_key); }
-  const { data } = await client.get(`${getBaseUrl()}/sessions/?${params}`);
-  return Array.isArray(data) ? data : data.results ?? [];
-};
-
-/**
- * Fetch sessions with their approved-leave attendees, server-side paginated.
- *
- * GET /v1/sessions/approved-leaves/?program_key=…[&q=…&page=…&page_size=…]
- * Returns { count, next, previous, results: [{ session_id, title, scheduled_start_time, status, students_on_leave }] }
- */
-export const getSessionApprovedLeaves = async ({
-  // eslint-disable-next-line camelcase
-  program_key, q, page, page_size, date_from, date_to,
-} = {}) => {
-  const client = getAuthenticatedHttpClient();
-  const params = new URLSearchParams();
-  // eslint-disable-next-line camelcase
-  if (program_key) { params.set('program_key', program_key); }
-  if (q) { params.set('q', q); }
-  if (page) { params.set('page', String(page)); }
-  // eslint-disable-next-line camelcase
-  if (page_size) { params.set('page_size', String(page_size)); }
-  // eslint-disable-next-line camelcase
-  if (date_from) { params.set('date_from', date_from); }
-  // eslint-disable-next-line camelcase
-  if (date_to) { params.set('date_to', date_to); }
-  const { data } = await client.get(`${getBaseUrl()}/sessions/approved-leaves/?${params}`);
-  return data;
-};
 
 /**
  * Admin approves or rejects a pending request.

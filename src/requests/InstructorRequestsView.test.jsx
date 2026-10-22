@@ -9,23 +9,21 @@ const jestDomMatchers = require('@testing-library/jest-dom/matchers');
 
 expect.extend(jestDomMatchers);
 
+jest.mock('@edly-io/frontend-component-fbr', () => ({
+  ...jest.requireActual('@edly-io/frontend-component-fbr'),
+  getLeaveUsage: jest.fn(),
+  useConfig: jest.fn().mockReturnValue({ data: { user_role: 'instructor' } }),
+  // The panel's own data and table are tested in the library.
+  SessionLeavesPanel: function MockSessionLeavesPanel() { return <div>Sessions & Approved Leaves</div>; },
+}));
 jest.mock('./api', () => ({
   getMyRequests: jest.fn(),
   deleteRequest: jest.fn(),
   withdrawRequest: jest.fn(),
-  getLeaveUsage: jest.fn(),
-  getSessions: jest.fn(),
-  getApprovedLeaves: jest.fn(),
-  getSessionApprovedLeaves: jest.fn(),
 }));
 
-jest.mock('../app/useConfig', () => ({
-  useConfig: jest.fn().mockReturnValue({ data: { user_role: 'instructor' } }),
-}));
-
-const {
-  getMyRequests, getLeaveUsage, getSessions, getApprovedLeaves, getSessionApprovedLeaves,
-} = require('./api');
+const { getLeaveUsage } = require('@edly-io/frontend-component-fbr');
+const { getMyRequests } = require('./api');
 
 const wrap = (lockedType = null) => render(
   <IntlProvider locale="en" messages={{}}>
@@ -44,9 +42,6 @@ beforeEach(() => {
   jest.clearAllMocks();
   getMyRequests.mockResolvedValue({ results: [], count: 0 });
   getLeaveUsage.mockResolvedValue({ threshold: 0, leaves: [] });
-  getSessions.mockResolvedValue([]);
-  getApprovedLeaves.mockResolvedValue([]);
-  getSessionApprovedLeaves.mockResolvedValue({ count: 0, results: [] });
 });
 
 describe('InstructorRequestsView', () => {

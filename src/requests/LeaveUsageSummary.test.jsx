@@ -8,16 +8,14 @@ const jestDomMatchers = require('@testing-library/jest-dom/matchers');
 
 expect.extend(jestDomMatchers);
 
-jest.mock('./api', () => ({
+jest.mock('@edly-io/frontend-component-fbr', () => ({
+  ...jest.requireActual('@edly-io/frontend-component-fbr'),
   getLeaveUsage: jest.fn(),
-}));
-
-jest.mock('../app/useConfig', () => ({
   useConfig: jest.fn().mockReturnValue({ data: { user_role: 'learner' } }),
 }));
 
-const { getLeaveUsage } = require('./api');
-const { useConfig } = require('../app/useConfig');
+const { getLeaveUsage } = require('@edly-io/frontend-component-fbr');
+const { useConfig } = require('@edly-io/frontend-component-fbr');
 
 const makeUsage = (availed, threshold = 7) => ({
   program_key: 'prog1',

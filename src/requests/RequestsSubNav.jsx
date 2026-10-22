@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 import { Badge } from '@openedx/paragon';
 
-import { useConfig } from '../app/useConfig';
-import { USER_ROLE } from '../shared/constants';
+import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import { getRequestCounts } from './api';
 
 const BASE_ITEMS = [

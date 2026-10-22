@@ -11,15 +11,18 @@ const jestDomMatchers = require('@testing-library/jest-dom/matchers');
 
 expect.extend(jestDomMatchers);
 
-jest.mock('./api', () => ({
+jest.mock('@edly-io/frontend-component-fbr', () => ({
+  ...jest.requireActual('@edly-io/frontend-component-fbr'),
   getLocations: jest.fn(),
+  AuditLogTable: function MockAuditLogTable() {
+    return <div data-testid="audit-log-table">Audit Log</div>;
+  },
+}));
+jest.mock('./api', () => ({
   deleteLocation: jest.fn(),
 }));
-jest.mock('../shared/AuditLogTable', () => function MockAuditLogTable() {
-  return <div data-testid="audit-log-table">Audit Log</div>;
-});
 
-const { getLocations } = require('./api');
+const { getLocations } = require('@edly-io/frontend-component-fbr');
 
 const wrap = () => render(
   <MemoryRouter>

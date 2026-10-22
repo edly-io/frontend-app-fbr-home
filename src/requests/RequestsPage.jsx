@@ -5,13 +5,11 @@ import {
   Outlet, useLocation, useParams, useSearchParams,
 } from 'react-router-dom';
 
-import { useConfig } from '../app/useConfig';
-import { USER_ROLE } from '../shared/constants';
+import { AuditLogTable, useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import AdminRequestsView from './AdminRequestsView';
 import InstructorRequestsView from './InstructorRequestsView';
 import LearnerRequestsView from './LearnerRequestsView';
 import RequestsSubNav from './RequestsSubNav';
-import AuditLogTable from '../shared/AuditLogTable';
 import LeaveSettingsModal from './LeaveSettingsModal';
 
 // Renders the role-appropriate view for a single request type tab.

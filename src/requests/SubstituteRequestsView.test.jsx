@@ -7,24 +7,27 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { IntlProvider } from 'react-intl';
 
+import { USER_ROLE } from '@edly-io/frontend-component-fbr';
 import SubstituteRequestsView from './SubstituteRequestsView';
-import { USER_ROLE } from '../shared/constants';
 
 const jestDomMatchers = require('@testing-library/jest-dom/matchers');
 
 expect.extend(jestDomMatchers);
 
+jest.mock('@edly-io/frontend-component-fbr', () => ({
+  ...jest.requireActual('@edly-io/frontend-component-fbr'),
+  cancelSession: jest.fn(),
+  useConfig: jest.fn(),
+}));
 jest.mock('./api', () => ({
   getSubstituteRequests: jest.fn(),
   getSubstituteRequest: jest.fn(),
   closeSubstituteRequest: jest.fn(),
 }));
-jest.mock('../calendar/api', () => ({ cancelSession: jest.fn() }));
-jest.mock('../app/useConfig', () => ({ useConfig: jest.fn() }));
 
+const { cancelSession } = require('@edly-io/frontend-component-fbr');
+const { useConfig } = require('@edly-io/frontend-component-fbr');
 const { getSubstituteRequests, closeSubstituteRequest } = require('./api');
-const { cancelSession } = require('../calendar/api');
-const { useConfig } = require('../app/useConfig');
 
 const PROGRAM = 'program-v1:FBR+STP+2026-A';
 

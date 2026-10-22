@@ -3,13 +3,12 @@ import {
   Alert, ButtonGroup, Button, Spinner,
 } from '@openedx/paragon';
 import './dashboard.scss';
+import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import DashboardShell from './DashboardShell';
 import AdminDashboardView from '../admin-dashboard/AdminDashboardView';
 import InstructorDashboardPage from '../instructor-dashboard/InstructorDashboardPage';
 import TraineeDashboardPage from '../trainee-dashboard/TraineeDashboardPage';
 import useMyFbrRoles from '../app/useMyFbrRoles';
-import { useConfig } from '../app/useConfig';
-import { USER_ROLE } from '../shared/constants';
 
 const DashboardPage = () => {
   const { roles, isLoading: rolesLoading } = useMyFbrRoles();

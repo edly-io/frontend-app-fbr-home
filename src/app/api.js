@@ -24,13 +24,6 @@ export const getInstructorDashboard = async () => {
   return data;
 };
 
-export const getPendingFeedback = async () => {
-  const client = getAuthenticatedHttpClient();
-  const url = `${getConfig().LMS_BASE_URL}/fbr/api/feedback/pending/`;
-  const { data } = await client.get(url);
-  return Array.isArray(data) ? data : data.results ?? [];
-};
-
 export const getAdminDashboard = async () => {
   const client = getAuthenticatedHttpClient();
   const url = `${getConfig().LMS_BASE_URL}/fbr/api/admin-dashboard/v1/summary/`;
@@ -70,18 +63,6 @@ export const getPrograms = async () => {
     enrolledAt: p.learner_enrolled_at || null,
     courseCount: p.course_count ?? 0,
   }));
-};
-
-export const getProgramCourses = async (programKey) => {
-  const client = getAuthenticatedHttpClient();
-  const { data } = await client.get(`${getConfig().STUDIO_BASE_URL}/fbr/api/programs/${programKey}/courses/`);
-  return Array.isArray(data) ? data : (data.results ?? []);
-};
-
-export const getProgram = async (programKey) => {
-  const client = getAuthenticatedHttpClient();
-  const { data } = await client.get(`${getConfig().STUDIO_BASE_URL}/fbr/api/programs/${programKey}/`);
-  return data;
 };
 
 export const updateProgram = async (programKey, payload) => {
