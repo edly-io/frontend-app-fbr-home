@@ -3,6 +3,7 @@ import { render, screen, within } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { IntlProvider } from 'react-intl';
 import { MemoryRouter } from 'react-router-dom';
+import { getConfig } from '@edx/frontend-platform';
 
 import AdminDashboardView from './AdminDashboardView';
 import useAdminDashboard from './useAdminDashboard';
@@ -17,6 +18,9 @@ jest.mock('../dashboard/useFeedback', () => () => ({
 }));
 jest.mock('@edx/frontend-platform/auth', () => ({
   getAuthenticatedUser: () => ({ username: 'admin' }),
+}));
+jest.mock('@edx/frontend-platform', () => ({
+  getConfig: jest.fn(),
 }));
 
 const feedbackItem = (id) => ({
@@ -43,7 +47,20 @@ const data = {
     pending_feedback: 6,
     upcoming_sessions: 3,
   },
-  pending_attendance: [],
+  pending_attendance: [
+    {
+      session_id: '7',
+      program_key: 'K',
+      program_name: 'Programme K',
+      course_id: 'C',
+      session_start: '2026-10-14T10:00:00Z',
+      title: 'Roster session',
+      trainee_count: 10,
+      unmarked_count: 4,
+      age_days: 1,
+      can_mark: true,
+    },
+  ],
   pending_requests: {
     leave_count: 7,
     remote_session_count: 2,
@@ -56,7 +73,7 @@ const data = {
   holidays: [],
   upcoming_sessions: [
     {
-      session_id: 'abc', program_key: 'prog-a', program_name: 'Programme A', title: 'Session 1', session_start: '2026-10-14T10:00:00Z',
+      session_id: '7', program_key: 'K', program_name: 'Programme K', title: 'Session 1', session_start: '2026-10-14T10:00:00Z',
     },
   ],
 };
@@ -69,6 +86,7 @@ const renderView = () => render(
 
 beforeEach(() => {
   useAdminDashboard.mockReturnValue({ data, isLoading: false, isError: false });
+  getConfig.mockReturnValue({ AUTHORING_BASE_URL: 'http://apps.test/' });
 });
 
 const statValue = (label) => screen
@@ -95,10 +113,38 @@ it('lists every feedback item without a View all toggle', () => {
   expect(screen.queryByRole('button', { name: /view all/i })).not.toBeInTheDocument();
 });
 
-it('opens an upcoming session in the calendar session popup', () => {
+it('opens an upcoming session in the Studio calendar session popup', () => {
   renderView();
   expect(screen.getByRole('link', { name: /^view/i })).toHaveAttribute(
     'href',
-    '/prog-a/calendar?modal=session&id=abc',
+    'http://apps.test/authoring/programs/K/calendar?modal=session&id=7',
   );
+});
+
+it('opens a session roster in Studio attendance', () => {
+  renderView();
+  expect(screen.getByRole('link', { name: /^mark/i })).toHaveAttribute(
+    'href',
+    'http://apps.test/authoring/programs/K/attendance/sessions/7?course_id=C',
+  );
+});
+
+it('links pending requests to Studio', () => {
+  renderView();
+  const row = screen.getByText('Programme A', { selector: '.admin-dashboard__request-program-name' }).parentElement;
+  expect(within(row).getByRole('link', { name: /review/i })).toHaveAttribute(
+    'href',
+    'http://apps.test/authoring/programs/prog-a/requests/leaves',
+  );
+});
+
+it('renders no broken links when AUTHORING_BASE_URL is unset', () => {
+  getConfig.mockReturnValue({});
+  renderView();
+  expect(screen.queryByRole('link', { name: /^view/i })).not.toBeInTheDocument();
+  expect(screen.queryByRole('link', { name: /^mark/i })).not.toBeInTheDocument();
+  expect(screen.queryByRole('link', { name: /review/i })).not.toBeInTheDocument();
+  // The work itself is still listed.
+  expect(screen.getByText('Roster session')).toBeInTheDocument();
+  expect(screen.getByText('Session 1')).toBeInTheDocument();
 });

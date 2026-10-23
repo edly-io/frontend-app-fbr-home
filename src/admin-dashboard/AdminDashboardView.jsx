@@ -6,7 +6,7 @@ import {
   CheckCircle, EventNote, Feedback, School,
 } from '@openedx/paragon/icons';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
-import { Link } from 'react-router-dom';
+import { getStudioProgramUrl } from '../app/studioUrls';
 import AttendanceToMarkCard from '../instructor-dashboard/components/AttendanceToMarkCard';
 import FeedbackToSubmitCard from '../instructor-dashboard/components/FeedbackToSubmitCard';
 import FeedbackFormModal from '../dashboard/FeedbackFormModal';
@@ -141,7 +141,11 @@ const AdminDashboardView = () => {
         <Col xs={12} lg={6} className="mb-3" id="admin-attendance-section">
           <AttendanceToMarkCard
             sessions={data.pending_attendance ?? []}
-            getSessionLink={sess => `/${sess.program_key}/attendance/sessions/${sess.session_id}${sess.course_id ? `?course_id=${encodeURIComponent(sess.course_id)}` : ''}`}
+            getSessionLink={sess => getStudioProgramUrl(
+              sess.program_key,
+              `attendance/sessions/${sess.session_id}`,
+              sess.course_id ? `?course_id=${encodeURIComponent(sess.course_id)}` : '',
+            )}
           />
         </Col>
         <Col xs={12} lg={6} className="mb-3" id="admin-requests-section">
@@ -160,23 +164,29 @@ const AdminDashboardView = () => {
               <Alert variant="success">No sessions scheduled in the near future.</Alert>
             ) : (
               <div className="admin-dashboard__session-list dashboard-scroll-list">
-                {data.upcoming_sessions.map(session => (
-                  <article className="admin-dashboard__session-row" key={session.session_id}>
-                    <div>
-                      <strong>{session.title}</strong>
-                      <p>
-                        {[session.program_name, session.course_code, formatSessionDate(session.session_start)]
-                          .filter(Boolean).join(' · ')}
-                      </p>
-                    </div>
-                    <Link
-                      to={`/${session.program_key}/calendar?modal=session&id=${encodeURIComponent(session.session_id)}`}
-                      className="btn btn-outline-secondary btn-sm"
-                    >
-                      View →
-                    </Link>
-                  </article>
-                ))}
+                {data.upcoming_sessions.map(session => {
+                  const sessionUrl = getStudioProgramUrl(
+                    session.program_key,
+                    'calendar',
+                    `?modal=session&id=${encodeURIComponent(session.session_id)}`,
+                  );
+                  return (
+                    <article className="admin-dashboard__session-row" key={session.session_id}>
+                      <div>
+                        <strong>{session.title}</strong>
+                        <p>
+                          {[session.program_name, session.course_code, formatSessionDate(session.session_start)]
+                            .filter(Boolean).join(' · ')}
+                        </p>
+                      </div>
+                      {sessionUrl && (
+                        <a href={sessionUrl} className="btn btn-outline-secondary btn-sm">
+                          View →
+                        </a>
+                      )}
+                    </article>
+                  );
+                })}
               </div>
             )}
           </Card.Section>

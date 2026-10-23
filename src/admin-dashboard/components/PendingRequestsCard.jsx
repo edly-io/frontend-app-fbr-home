@@ -6,7 +6,7 @@ import {
 import {
   CheckCircle, EventNote, SwapHoriz, Wifi,
 } from '@openedx/paragon/icons';
-import { Link } from 'react-router-dom';
+import { getStudioProgramUrl } from '../../app/studioUrls';
 
 // Fallback for a backend that still sends request rows instead of *_by_program counts.
 const groupByProgram = (requests) => {
@@ -30,22 +30,24 @@ const RequestTypeSection = ({
       <strong>{label}</strong>
     </div>
     <div className="admin-dashboard__request-program-list">
-      {groups.map((group) => (
-        <div className="admin-dashboard__request-program-row" key={group.program_key}>
-          <span className="admin-dashboard__request-program-name">
-            {group.program_name || group.program_key}
-          </span>
-          <span className="admin-dashboard__request-program-count">
-            {group.count} pending
-          </span>
-          <Link
-            to={`/${group.program_key}/${basePath}`}
-            className="btn btn-outline-secondary btn-sm"
-          >
-            Review →
-          </Link>
-        </div>
-      ))}
+      {groups.map((group) => {
+        const reviewUrl = getStudioProgramUrl(group.program_key, basePath);
+        return (
+          <div className="admin-dashboard__request-program-row" key={group.program_key}>
+            <span className="admin-dashboard__request-program-name">
+              {group.program_name || group.program_key}
+            </span>
+            <span className="admin-dashboard__request-program-count">
+              {group.count} pending
+            </span>
+            {reviewUrl && (
+              <a href={reviewUrl} className="btn btn-outline-secondary btn-sm">
+                Review →
+              </a>
+            )}
+          </div>
+        );
+      })}
     </div>
   </div>
 );
