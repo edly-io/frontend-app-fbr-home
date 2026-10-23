@@ -132,3 +132,35 @@ describe('ProgramsListPage', () => {
     });
   });
 });
+
+describe('ProgramsListPage cards', () => {
+  const cardLink = async () => (await screen.findByText('Alpha Program')).closest('a');
+  const KEY = 'program-v1:FBR+STP+AlphaProgram';
+
+  it('opens the program in Studio for an admin', async () => {
+    getConfig.mockReturnValue({ STUDIO_BASE_URL: STUDIO, AUTHORING_BASE_URL: 'http://apps.test/' });
+    renderPage('admin');
+
+    expect(await cardLink()).toHaveAttribute('href', `http://apps.test/authoring/programs/${KEY}`);
+  });
+
+  it('opens the program courses page in fbr-home for a trainee', async () => {
+    getConfig.mockReturnValue({ STUDIO_BASE_URL: STUDIO, AUTHORING_BASE_URL: 'http://apps.test/' });
+    renderPage(USER_ROLE.LEARNER);
+
+    expect(await cardLink()).toHaveAttribute('href', `/${KEY}/courses`);
+  });
+
+  it('opens the program courses page in fbr-home for an instructor', async () => {
+    getConfig.mockReturnValue({ STUDIO_BASE_URL: STUDIO, AUTHORING_BASE_URL: 'http://apps.test/' });
+    renderPage(USER_ROLE.INSTRUCTOR);
+
+    expect(await cardLink()).toHaveAttribute('href', `/${KEY}/courses`);
+  });
+
+  it('falls back to the fbr-home link for an admin when AUTHORING_BASE_URL is unset', async () => {
+    renderPage('admin');
+
+    expect(await cardLink()).toHaveAttribute('href', `/${KEY}/courses`);
+  });
+});

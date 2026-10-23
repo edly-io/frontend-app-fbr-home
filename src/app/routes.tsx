@@ -44,7 +44,7 @@ export const SESSIONS_CERTIFICATE_PATH = '/:programId/certificate';
 // Public certificate page: what a scanned certificate QR code opens.
 export const SESSIONS_CERTIFICATE_VERIFY_PATH = '/verify/:certificateNumber';
 
-const Shell = SessionsAdminLayout as React.FC<{ children?: React.ReactNode }>;
+const Shell = SessionsAdminLayout as React.FC<{ children?: React.ReactNode, studioOnly?: boolean }>;
 
 const wrapInShell = (Component: React.ComponentType) => (
   <PageWrap>
@@ -52,6 +52,17 @@ const wrapInShell = (Component: React.ComponentType) => (
       <Shell>
         <Component />
       </Shell>
+    </AuthGate>
+  </PageWrap>
+);
+
+// Program paths fbr-home no longer serves (the admin screens moved to Studio,
+// e.g. /:programId/locations or /:programId/attendance/dashboard). Admins get
+// the "Moved to Studio" page; everyone else gets nothing, as for any unknown URL.
+const studioOnlyFallback = (
+  <PageWrap>
+    <AuthGate>
+      <Shell studioOnly />
     </AuthGate>
   </PageWrap>
 );
@@ -94,5 +105,6 @@ export const sessionsAdminRoutes = (
       <Route index element={<AttendanceIndexRedirect />} />
       <Route path="me" element={<MyAttendanceView />} />
     </Route>
+    <Route path="/:programId/*" element={studioOnlyFallback} />
   </>
 );

@@ -5,8 +5,9 @@ import {
   Spinner, Alert, Pagination,
 } from '@openedx/paragon';
 import { FooterSlot } from '@edx/frontend-component-footer';
-import { DebouncedSearch } from '@edly-io/frontend-component-fbr';
+import { DebouncedSearch, useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import HeaderSlot from '../plugin-slots/HeaderSlot';
+import { getStudioProgramUrl } from '../app/studioUrls';
 import ProgramCard from './ProgramCard';
 import { usePrograms } from '../app/hooks';
 
@@ -32,6 +33,10 @@ const SORT_OPTIONS = [
 ];
 
 const ProgramsListPage = () => {
+  const { data: config } = useConfig();
+  // Admins manage programs in Studio, so their cards open the program there.
+  const isAdmin = config?.user_role === USER_ROLE.ADMIN;
+
   const defaultSlug = 'courses';
 
   const defaultSort = 'enrolled';
@@ -125,6 +130,7 @@ const ProgramsListPage = () => {
               key={program.id}
               program={program}
               defaultSlug={defaultSlug}
+              studioUrl={isAdmin ? getStudioProgramUrl(program.id) : null}
             />
           ))}
         </div>

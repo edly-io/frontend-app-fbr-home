@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Navigate,
   Outlet,
+  useLocation,
   useParams,
   Link,
 } from 'react-router-dom';
 import { FooterSlot } from '@edx/frontend-component-footer';
 import { Badge, Container } from '@openedx/paragon';
+import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import HeaderSlot from '../plugin-slots/HeaderSlot';
+import MovedToStudioPage from './MovedToStudioPage';
 import SectionNav from './SectionNav';
+import { getStudioProgramUrl } from './studioUrls';
 import { useProgram } from './hooks';
 
 const STATUS_VARIANTS = {
@@ -31,11 +35,42 @@ const formatDate = (dateStr) => {
   return new Date(dateStr).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
 };
 
-const SessionsAdminLayout = ({ children = null }) => {
+// `studioOnly` marks a route that exists only to send admins to Studio (the
+// removed admin paths): everyone else gets nothing there.
+const SessionsAdminLayout = ({ children = null, studioOnly = false }) => {
   const { programId } = useParams();
   const {
     program, loading, error, notFound,
   } = useProgram(programId);
+  const { pathname, search } = useLocation();
+  const { data: config } = useConfig();
+  const isAdmin = config?.user_role === USER_ROLE.ADMIN;
+
+  // Admins do all program work in Studio: send them to the same page there.
+  // Read positionally, like SectionNav: `programId` carries `:` and `+`.
+  const subPath = pathname.split('/').filter(Boolean).slice(1).join('/');
+  const studioUrl = isAdmin ? getStudioProgramUrl(programId, subPath, search) : null;
+
+  useEffect(() => {
+    // `replace`, so Back returns to the page before this one rather than
+    // bouncing straight back into Studio.
+    if (studioUrl) { window.location.replace(studioUrl); }
+  }, [studioUrl]);
+
+  if (isAdmin) {
+    return (
+      <>
+        <HeaderSlot />
+        <main id="main-content" className="d-flex flex-column flex-grow-1">
+          <Container size="xl">
+            <MovedToStudioPage studioUrl={studioUrl} />
+          </Container>
+        </main>
+        <FooterSlot />
+      </>
+    );
+  }
+  if (studioOnly) { return null; }
 
   // A program that doesn't exist, or that the caller can't access, sends them back to the list.
   if (notFound) {
@@ -104,6 +139,7 @@ const SessionsAdminLayout = ({ children = null }) => {
 
 SessionsAdminLayout.propTypes = {
   children: PropTypes.node,
+  studioOnly: PropTypes.bool,
 };
 
 export default SessionsAdminLayout;
