@@ -5,20 +5,12 @@ import { PageWrap } from '@edx/frontend-platform/react';
 import { REQUEST_TYPE } from '@edly-io/frontend-component-fbr';
 import CalendarRoute from '../calendar/CalendarRoute';
 import AuthGate from './AuthGate';
-import RequireAdmin from './RequireAdmin';
 import SessionsAdminLayout from './SessionsAdminLayout';
 import SessionsLanding from './SessionsLanding';
 import RequestsPage, { RequestsTabPage } from '../requests/RequestsPage';
-import SubstituteRequestsView from '../requests/SubstituteRequestsView';
 import AttendancePage from '../attendance/AttendancePage';
 import AttendanceIndexRedirect from '../attendance/AttendanceIndexRedirect';
-import AttendanceRosterPage from '../attendance/AttendanceRosterPage';
 import MyAttendanceView from '../attendance/MyAttendanceView';
-import PerCourseView from '../attendance/PerCourseView';
-import PerLearnerView from '../attendance/PerLearnerView';
-import CourseSummaryReport from '../attendance/reports/CourseSummaryReport';
-import LocationsPage from '../locations/LocationsPage';
-import HolidaysPage from '../holidays/HolidaysPage';
 import ProgramCoursesPage from '../programs/ProgramCoursesPage';
 import ProgramCertificatePage from '../programs/ProgramCertificatePage';
 import CertificateVerifyPage from '../programs/CertificateVerifyPage';
@@ -51,8 +43,6 @@ export const SESSIONS_COURSES_PATH = '/:programId/courses';
 export const SESSIONS_CERTIFICATE_PATH = '/:programId/certificate';
 // Public certificate page: what a scanned certificate QR code opens.
 export const SESSIONS_CERTIFICATE_VERIFY_PATH = '/verify/:certificateNumber';
-export const SESSIONS_LOCATIONS_PATH = '/:programId/locations';
-export const SESSIONS_HOLIDAYS_PATH = '/:programId/holidays';
 
 const Shell = SessionsAdminLayout as React.FC<{ children?: React.ReactNode }>;
 
@@ -62,20 +52,6 @@ const wrapInShell = (Component: React.ComponentType) => (
       <Shell>
         <Component />
       </Shell>
-    </AuthGate>
-  </PageWrap>
-);
-
-// Admin-only variant: RequireAdmin sits OUTSIDE the Shell so non-admins see
-// the full-page UnauthorizedPage with no sidebar / program selector / nav.
-const wrapAdminOnly = (Component: React.ComponentType) => (
-  <PageWrap>
-    <AuthGate>
-      <RequireAdmin>
-        <Shell>
-          <Component />
-        </Shell>
-      </RequireAdmin>
     </AuthGate>
   </PageWrap>
 );
@@ -106,23 +82,16 @@ export const sessionsAdminRoutes = (
       <Route index element={<Navigate to="leaves" replace />} />
       <Route path="leaves" element={<RequestsTabPage lockedType={REQUEST_TYPE.LEAVE} />} />
       <Route path="remote-sessions" element={<RequestsTabPage lockedType={REQUEST_TYPE.REMOTE_SESSION} />} />
-      <Route path="substitute-requests" element={<SubstituteRequestsView />} />
     </Route>
-    <Route path={SESSIONS_LOCATIONS_PATH} element={wrapAdminOnly(LocationsPage)} />
-    <Route path={SESSIONS_HOLIDAYS_PATH} element={wrapAdminOnly(HolidaysPage)} />
     <Route
       path={SESSIONS_DASHBOARD_PATH}
       element={<PageWrap><AuthGate><DashboardPage /></AuthGate></PageWrap>}
     />
     {/* Attendance tab is a layout route — children render inside the
-        AttendancePage shell's <Outlet />. Admin: by-course / by-learner tabs.
-        Learner: my attendance only (no sub-nav). Instructor: redirected away. */}
+        AttendancePage shell's <Outlet />. Learner: my attendance only.
+        Instructor: redirected away. Admins manage attendance in Studio. */}
     <Route path={SESSIONS_ATTENDANCE_PATH} element={wrapInShell(AttendancePage)}>
       <Route index element={<AttendanceIndexRedirect />} />
-      <Route path="by-course" element={<PerCourseView />} />
-      <Route path="by-learner" element={<PerLearnerView />} />
-      <Route path="dashboard" element={<CourseSummaryReport />} />
-      <Route path="sessions/:sessionId" element={<AttendanceRosterPage />} />
       <Route path="me" element={<MyAttendanceView />} />
     </Route>
   </>

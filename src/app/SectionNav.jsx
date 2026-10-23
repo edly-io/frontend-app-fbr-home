@@ -9,8 +9,6 @@ const SECTIONS = [
   { slug: 'requests', label: 'Requests' },
   { slug: 'attendance', label: 'Attendance', hideForInstructor: true },
   { slug: 'certificate', label: 'Certificate', learnerOnly: true },
-  { slug: 'locations', label: 'Locations', adminOnly: true },
-  { slug: 'holidays', label: 'Holidays', adminOnly: true },
 ];
 
 const SectionNav = () => {
@@ -18,11 +16,9 @@ const SectionNav = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { data: config } = useConfig();
-  const isAdmin = config?.user_role === USER_ROLE.ADMIN;
   const isInstructor = config?.user_role === USER_ROLE.INSTRUCTOR;
   const isLearner = config?.user_role === USER_ROLE.LEARNER;
   const visibleSections = SECTIONS.filter((s) => {
-    if (s.adminOnly && !isAdmin) { return false; }
     if (s.hideForInstructor && isInstructor) { return false; }
     if (s.learnerOnly && !isLearner) { return false; }
     return true;

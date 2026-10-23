@@ -413,10 +413,6 @@ $programs-grid-gap: 1.5rem;
   flex: 1;
 }
 
-.program-card__footer {
-  padding: 0 1.125rem 1.125rem;
-}
-
 // ─── Program Header (SessionsAdminLayout) ────────────────────────────────────
 
 .sessions-program-header {
@@ -475,24 +471,6 @@ $programs-grid-gap: 1.5rem;
 
   @media (--pgn-size-breakpoint-min-width-sm) {
     flex-shrink: 0;
-  }
-}
-
-.sessions-program-header__studio-link {
-  font-size: .875rem;
-  color: rgb(255 255 255 / .75);
-  text-decoration: none;
-  border: 1px solid rgb(255 255 255 / .35);
-  border-radius: 4px;
-  padding: 4px 12px;
-  transition: color 120ms, border-color 120ms;
-  white-space: nowrap;
-
-  &:hover,
-  &:focus {
-    color: #FFFFFF;
-    border-color: rgb(255 255 255 / .7);
-    text-decoration: none;
   }
 }
 

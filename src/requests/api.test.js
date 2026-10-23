@@ -3,10 +3,7 @@ import {
   createRequest,
   deleteRequest,
   withdrawRequest,
-  getRequests,
   getMyRequests,
-  reviewRequest,
-  bulkApproveLeaves,
 } from './api';
 
 jest.mock('@edx/frontend-platform/auth', () => ({
@@ -122,72 +119,26 @@ describe('withdrawRequest', () => {
   });
 });
 
-// ─── reviewRequest ────────────────────────────────────────────────────────────
+// ─── getMyRequests (single-type fetch) ───────────────────────────────────────
 
-describe('reviewRequest', () => {
-  it('patches the leave review endpoint', async () => {
-    mockClient.patch.mockResolvedValue({ data: { id: 1, state: 'APPROVED' } });
-    await reviewRequest('123', { state: 'APPROVED', reviewer_note: 'ok' }, 'leave');
-    expect(mockClient.patch).toHaveBeenCalledWith(
-      expect.stringContaining('/requests/leave/123/review/'),
-      { state: 'APPROVED', reviewer_note: 'ok' },
-    );
-  });
-
-  it('patches the remote-session review endpoint', async () => {
-    mockClient.patch.mockResolvedValue({ data: { id: 2, state: 'REJECTED' } });
-    await reviewRequest('456', { state: 'REJECTED', reviewer_note: 'no' }, 'remote_session');
-    expect(mockClient.patch).toHaveBeenCalledWith(
-      expect.stringContaining('/requests/remote-session/456/review/'),
-      { state: 'REJECTED', reviewer_note: 'no' },
-    );
-  });
-
-  it('returns updated request data', async () => {
-    mockClient.patch.mockResolvedValue({ data: { id: 1 } });
-    const result = await reviewRequest('1', { state: 'APPROVED', reviewer_note: '' }, 'leave');
-    expect(result).toEqual({ id: 1 });
-  });
-
-  it('sends WITHDRAWN state for withdrawal approval', async () => {
-    mockClient.patch.mockResolvedValue({ data: { id: 3, state: 'WITHDRAWN' } });
-    await reviewRequest('3', { state: 'WITHDRAWN', reviewer_note: '' }, 'leave');
-    expect(mockClient.patch).toHaveBeenCalledWith(
-      expect.stringContaining('/requests/leave/3/review/'),
-      { state: 'WITHDRAWN', reviewer_note: '' },
-    );
-  });
-
-  it('sends WITHDRAWAL_REJECTED state for withdrawal denial', async () => {
-    mockClient.patch.mockResolvedValue({ data: { id: 4, state: 'WITHDRAWAL_REJECTED' } });
-    await reviewRequest('4', { state: 'WITHDRAWAL_REJECTED', reviewer_note: 'Not valid' }, 'leave');
-    expect(mockClient.patch).toHaveBeenCalledWith(
-      expect.stringContaining('/requests/leave/4/review/'),
-      { state: 'WITHDRAWAL_REJECTED', reviewer_note: 'Not valid' },
-    );
-  });
-});
-
-// ─── getRequests / getMyRequests (single-type fetch) ─────────────────────────
-
-describe('getRequests', () => {
+describe('getMyRequests', () => {
   it('calls only the endpoint for the given type', async () => {
     mockClient.get.mockResolvedValue({ data: { results: [], count: 0 } });
-    await getRequests({ type: 'leave' });
+    await getMyRequests({ type: 'leave' });
     expect(mockClient.get).toHaveBeenCalledTimes(1);
     expect(mockClient.get).toHaveBeenCalledWith(expect.stringContaining('/requests/leave/'));
   });
 
   it('returns the server envelope untouched, so count is the server total', async () => {
     mockClient.get.mockResolvedValue({ data: { count: 300, results: [{ id: 1 }] } });
-    const result = await getRequests({ type: 'leave', page: 1, page_size: 25 });
+    const result = await getMyRequests({ type: 'leave', page: 1, page_size: 25 });
     expect(result.count).toBe(300);
     expect(result.results).toEqual([{ id: 1 }]);
   });
 
   it('forwards paging and filters to the server', async () => {
     mockClient.get.mockResolvedValue({ data: { results: [], count: 0 } });
-    await getRequests({
+    await getMyRequests({
       type: 'remote_session', program_key: 'prog1', state: 'PENDING', page: 3, page_size: 15,
     });
     const [url] = mockClient.get.mock.calls[0];
@@ -196,31 +147,5 @@ describe('getRequests', () => {
     expect(url).toContain('page_size=15');
     expect(url).toContain('program_key=prog1');
     expect(url).toContain('state=PENDING');
-  });
-});
-
-describe('getMyRequests', () => {
-  it('is an alias of getRequests', async () => {
-    mockClient.get.mockResolvedValue({ data: { results: [], count: 0 } });
-    await getMyRequests({ type: 'leave' });
-    expect(mockClient.get).toHaveBeenCalledTimes(1);
-  });
-});
-
-// ─── bulkApproveLeaves ────────────────────────────────────────────────────────
-
-describe('bulkApproveLeaves', () => {
-  it('POSTs to the bulk-approve endpoint with correct payload', async () => {
-    const responseData = { approved_count: 2, ignored_count: 0, ignored_ids: [] };
-    mockClient.post.mockResolvedValue({ data: responseData });
-    const result = await bulkApproveLeaves({
-      program_key: 'prog1',
-      leave_ids: ['uuid-1', 'uuid-2'],
-    });
-    expect(mockClient.post).toHaveBeenCalledWith(
-      expect.stringContaining('/requests/leave/bulk-approve/'),
-      { program_key: 'prog1', leave_ids: ['uuid-1', 'uuid-2'] },
-    );
-    expect(result).toEqual(responseData);
   });
 });

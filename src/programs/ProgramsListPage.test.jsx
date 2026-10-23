@@ -43,7 +43,7 @@ const mockClient = { get: jest.fn() };
 const programRequests = () => mockClient.get.mock.calls.filter(([url]) => url === PROGRAMS_URL);
 const lastParams = () => new URLSearchParams(programRequests().at(-1)[1].params);
 
-const renderPage = (role = USER_ROLE.ADMIN) => {
+const renderPage = (role = USER_ROLE.LEARNER) => {
   useConfig.mockReturnValue({ data: { user_role: role } });
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
@@ -87,14 +87,14 @@ describe('ProgramsListPage', () => {
     expect(screen.getByRole('navigation', { name: 'Programs pagination' })).toBeInTheDocument();
   });
 
-  it('sorts admins A-Z by default', async () => {
-    renderPage(USER_ROLE.ADMIN);
-    await screen.findByText('Alpha Program');
-    expect(lastParams().toString()).toBe('page=1&page_size=20&ordering=name');
-  });
-
   it('sorts trainees by latest enrollment by default', async () => {
     renderPage(USER_ROLE.LEARNER);
+    await screen.findByText('Alpha Program');
+    expect(lastParams().toString()).toBe('page=1&page_size=20&ordering=-learner_enrolled_at');
+  });
+
+  it('sorts instructors by latest enrollment by default', async () => {
+    renderPage(USER_ROLE.INSTRUCTOR);
     await screen.findByText('Alpha Program');
     expect(lastParams().get('ordering')).toBe('-learner_enrolled_at');
   });

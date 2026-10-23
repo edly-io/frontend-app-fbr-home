@@ -87,12 +87,6 @@ export const getProgram = async (programKey) => {
   return toProgram(data);
 };
 
-export const updateProgram = async (programKey, payload) => {
-  const client = getAuthenticatedHttpClient();
-  const { data } = await client.patch(`${getProgramsBaseUrl()}/${programKey}/`, payload);
-  return data;
-};
-
 export const getMyCertificate = async (programKey) => {
   // The learner's own active certificate number for a program (LMS). Used to
   // load the certificate for the program's Certificate tab.

@@ -50,7 +50,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   getConfig.mockReturnValue({ STUDIO_BASE_URL: STUDIO });
   getAuthenticatedHttpClient.mockReturnValue(mockClient);
-  useConfig.mockReturnValue({ data: { user_role: USER_ROLE.ADMIN } });
+  useConfig.mockReturnValue({ data: { user_role: USER_ROLE.LEARNER } });
 });
 
 describe('SessionsAdminLayout', () => {

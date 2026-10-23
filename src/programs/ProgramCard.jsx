@@ -22,9 +22,7 @@ const formatDate = (dateStr) => {
   return new Date(dateStr).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
 };
 
-const ProgramCard = ({
-  program, isAdmin = false, authoringBaseUrl = null, defaultSlug = 'courses',
-}) => {
+const ProgramCard = ({ program, defaultSlug = 'courses' }) => {
   const {
     id, name, programType, org, batch, status, startDate, endDate, description, cardImage,
     courseCount, enrolledAt,
@@ -32,9 +30,6 @@ const ProgramCard = ({
 
   const statusKey = (status || '').toLowerCase();
   const dateRange = [formatDate(startDate), formatDate(endDate)].filter(Boolean).join(' – ');
-  const studioUrl = isAdmin && authoringBaseUrl
-    ? `${authoringBaseUrl.replace(/\/$/, '')}/authoring/programs/${id}`
-    : null;
 
   const bannerStyle = cardImage
     ? { backgroundImage: `url(${cardImage})` }
@@ -77,20 +72,6 @@ const ProgramCard = ({
             : <div className="program-card__spacer" />}
         </div>
       </Link>
-
-      {isAdmin && studioUrl && (
-        <div className="program-card__footer">
-          <a
-            href={studioUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="btn btn-outline-secondary btn-sm w-100"
-            onClick={(e) => e.stopPropagation()}
-          >
-            Manage in Studio ↗
-          </a>
-        </div>
-      )}
     </div>
   );
 };
@@ -110,8 +91,6 @@ ProgramCard.propTypes = {
     courseCount: PropTypes.number,
     enrolledAt: PropTypes.string,
   }).isRequired,
-  isAdmin: PropTypes.bool,
-  authoringBaseUrl: PropTypes.string,
   defaultSlug: PropTypes.string,
 };
 

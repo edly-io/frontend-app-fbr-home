@@ -8,8 +8,6 @@ import {
 } from 'react-router-dom';
 import { FooterSlot } from '@edx/frontend-component-footer';
 import { Badge, Container } from '@openedx/paragon';
-import { getConfig } from '@edx/frontend-platform';
-import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import HeaderSlot from '../plugin-slots/HeaderSlot';
 import SectionNav from './SectionNav';
 import { useProgram } from './hooks';
@@ -38,9 +36,6 @@ const SessionsAdminLayout = ({ children = null }) => {
   const {
     program, loading, error, notFound,
   } = useProgram(programId);
-  const { data: config } = useConfig();
-  const isAdmin = config?.user_role === USER_ROLE.ADMIN;
-  const authoringBaseUrl = getConfig().AUTHORING_BASE_URL || null;
 
   // A program that doesn't exist, or that the caller can't access, sends them back to the list.
   if (notFound) {
@@ -48,9 +43,6 @@ const SessionsAdminLayout = ({ children = null }) => {
   }
 
   const statusKey = (program?.status || '').toLowerCase();
-  const studioUrl = isAdmin && authoringBaseUrl && programId
-    ? `${authoringBaseUrl.replace(/\/$/, '')}/authoring/programs/${programId}`
-    : null;
   const subtitle = [program?.org, program?.programType, program?.batch].filter(Boolean).join(' · ');
   const dateRange = [
     formatDate(program?.startDate),
@@ -84,16 +76,6 @@ const SessionsAdminLayout = ({ children = null }) => {
                       <Badge variant={STATUS_VARIANTS[statusKey] || 'light'}>
                         {STATUS_LABELS[statusKey] || program.status}
                       </Badge>
-                    )}
-                    {studioUrl && (
-                      <a
-                        href={studioUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="sessions-program-header__studio-link"
-                      >
-                        Manage in Studio ↗
-                      </a>
                     )}
                   </div>
                 </div>

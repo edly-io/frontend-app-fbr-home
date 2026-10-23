@@ -1,26 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, ButtonGroup } from '@openedx/paragon';
-import {
-  Outlet, useLocation, useParams, useSearchParams,
-} from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
-import { AuditLogTable, useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
-import AdminRequestsView from './AdminRequestsView';
+import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import InstructorRequestsView from './InstructorRequestsView';
 import LearnerRequestsView from './LearnerRequestsView';
 import RequestsSubNav from './RequestsSubNav';
-import LeaveSettingsModal from './LeaveSettingsModal';
 
 // Renders the role-appropriate view for a single request type tab.
 // Used as the element for /:programId/requests/leaves and /remote-sessions.
+// Admins never get here: they manage requests in Studio.
 export const RequestsTabPage = ({ lockedType }) => {
   const { data: config } = useConfig();
-  const userRole = config?.user_role ?? USER_ROLE.LEARNER;
-  if (userRole === USER_ROLE.ADMIN) {
-    return <AdminRequestsView lockedType={lockedType} />;
-  }
-  if (userRole === USER_ROLE.INSTRUCTOR) {
+  if (config?.user_role === USER_ROLE.INSTRUCTOR) {
     return <InstructorRequestsView lockedType={lockedType} />;
   }
   return <LearnerRequestsView lockedType={lockedType} />;
@@ -31,77 +23,11 @@ RequestsTabPage.propTypes = {
 };
 
 // Layout route: renders the sub-nav tabs above whichever tab is active.
-// Admins get a top-level "Requests | Audit Log" toggle.
-const RequestsPage = () => {
-  const { programId } = useParams();
-  const { data: config } = useConfig();
-  const isAdmin = config?.user_role === USER_ROLE.ADMIN;
-  const [searchParams, setSearchParams] = useSearchParams();
-  const activeView = searchParams.get('view') || 'list';
-  const recordFilter = searchParams.get('record_id') || undefined;
-  const { pathname } = useLocation();
-  const isLeavesTab = /\/requests\/leaves\/?$/.test(pathname);
-
-  const handleViewChange = (view) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      next.set('view', view);
-      if (view !== 'audit-log') { next.delete('record_id'); }
-      return next;
-    });
-  };
-  const handleClearFilter = () => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      next.delete('record_id');
-      return next;
-    });
-  };
-
-  return (
-    <>
-      {isAdmin && (
-        <div className="d-flex flex-wrap justify-content-end align-items-center mb-3" style={{ gap: '.5rem' }}>
-          {isLeavesTab && activeView === 'list' && <LeaveSettingsModal programKey={programId} />}
-          <ButtonGroup size="sm">
-            <Button
-              variant={activeView === 'list' ? 'primary' : 'outline-primary'}
-              size="sm"
-              aria-pressed={activeView === 'list'}
-              onClick={() => handleViewChange('list')}
-            >
-              Requests
-            </Button>
-            <Button
-              variant={activeView === 'audit-log' ? 'primary' : 'outline-primary'}
-              size="sm"
-              aria-pressed={activeView === 'audit-log'}
-              onClick={() => handleViewChange('audit-log')}
-            >
-              Audit Log
-            </Button>
-          </ButtonGroup>
-        </div>
-      )}
-
-      {isAdmin && activeView === 'audit-log' ? (
-        <div className="audit-log-view">
-          <AuditLogTable
-            appLabel="attendance"
-            models={['leaverequest', 'remotesessionrequest', 'substituterequest']}
-            programKey={programId}
-            recordFilter={recordFilter}
-            onClearFilter={handleClearFilter}
-          />
-        </div>
-      ) : (
-        <>
-          <RequestsSubNav />
-          <Outlet />
-        </>
-      )}
-    </>
-  );
-};
+const RequestsPage = () => (
+  <>
+    <RequestsSubNav />
+    <Outlet />
+  </>
+);
 
 export default RequestsPage;
