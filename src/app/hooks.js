@@ -18,6 +18,7 @@ export const usePrograms = (query) => {
   });
   return {
     programs: data?.results ?? [],
+    count: data?.count ?? 0,
     numPages: data?.numPages ?? 1,
     loading: isLoading,
     error: error ? (error.message || 'Failed to load programs') : '',

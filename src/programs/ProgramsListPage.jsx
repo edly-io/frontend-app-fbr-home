@@ -23,6 +23,8 @@ const SORT_OPTIONS_ADMIN = [
   { value: 'za', label: 'Name Z–A' },
 ];
 
+const PAGE_SIZE = 20;
+
 const ORDERING_BY_SORT = {
   enrolled: '-learner_enrolled_at',
   az: 'name',
@@ -84,9 +86,10 @@ const ProgramsListPage = () => {
 
   const effectiveSortOrder = sortOrder || defaultSort;
   const {
-    programs, numPages, loading, error,
+    programs, count, numPages, loading, error,
   } = usePrograms({
     page,
+    pageSize: PAGE_SIZE,
     search,
     statuses: STATUS_OPTIONS.map(({ value }) => value).filter((value) => statusFilters.has(value)),
     ordering: ORDERING_BY_SORT[effectiveSortOrder],
@@ -94,6 +97,8 @@ const ProgramsListPage = () => {
 
   const hasActiveFilter = search.trim() || statusFilters.size > 0;
   const activeRefineCount = statusFilters.size + (effectiveSortOrder !== defaultSort ? 1 : 0);
+
+  const firstRow = (page - 1) * PAGE_SIZE + 1;
 
   const renderBody = () => {
     if (loading) {
@@ -148,15 +153,17 @@ const ProgramsListPage = () => {
             />
           ))}
         </div>
-        {numPages > 1 && (
+        <div className="d-flex flex-wrap justify-content-between align-items-center mt-4">
+          <span className="small text-muted">
+            {`Showing ${firstRow} - ${firstRow + programs.length - 1} of ${count}.`}
+          </span>
           <Pagination
-            className="d-flex justify-content-center mt-4"
             paginationLabel="Programs pagination"
             pageCount={numPages}
             currentPage={page}
             onPageSelect={setPage}
           />
-        )}
+        </div>
       </>
     );
   };

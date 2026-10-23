@@ -67,9 +67,9 @@ const toProgram = (p) => ({
  * as `status=a&status=b`, the form the API reads (axios would send `status[]`).
  */
 export const getPrograms = async ({
-  page, search, statuses, ordering,
+  page, pageSize, search, statuses, ordering,
 }) => {
-  const params = new URLSearchParams({ page: String(page), ordering });
+  const params = new URLSearchParams({ page: String(page), page_size: String(pageSize), ordering });
   if (search.trim()) { params.append('search', search.trim()); }
   statuses.forEach((status) => params.append('status', status));
   const client = getAuthenticatedHttpClient();

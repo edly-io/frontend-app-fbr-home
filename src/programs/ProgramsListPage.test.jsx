@@ -75,12 +75,22 @@ describe('ProgramsListPage', () => {
 
     expect(await screen.findByText('Oldest Program')).toBeInTheDocument();
     expect(lastParams().get('page')).toBe('2');
+    expect(screen.getByText('Showing 21 - 21 of 21.')).toBeInTheDocument();
+  });
+
+  it('shows the row status and pagination control even with one page', async () => {
+    mockClient.get.mockResolvedValue({ data: listPage(['Alpha Program', 'Bravo Program']) });
+
+    renderPage();
+
+    expect(await screen.findByText('Showing 1 - 2 of 2.')).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Programs pagination' })).toBeInTheDocument();
   });
 
   it('sorts admins A-Z by default', async () => {
     renderPage(USER_ROLE.ADMIN);
     await screen.findByText('Alpha Program');
-    expect(lastParams().toString()).toBe('page=1&ordering=name');
+    expect(lastParams().toString()).toBe('page=1&page_size=20&ordering=name');
   });
 
   it('sorts trainees by latest enrollment by default', async () => {
