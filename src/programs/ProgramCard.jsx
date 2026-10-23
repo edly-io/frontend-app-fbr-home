@@ -22,9 +22,9 @@ const formatDate = (dateStr) => {
   return new Date(dateStr).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
 };
 
-const ProgramCard = ({
-  program, isAdmin = false, authoringBaseUrl = null, defaultSlug = 'courses',
-}) => {
+// `studioUrl` is set for admins: their program work lives in Studio, so the
+// card opens the program there instead of an fbr-home page.
+const ProgramCard = ({ program, defaultSlug = 'courses', studioUrl = null }) => {
   const {
     id, name, programType, org, batch, status, startDate, endDate, description, cardImage,
     courseCount, enrolledAt,
@@ -32,64 +32,55 @@ const ProgramCard = ({
 
   const statusKey = (status || '').toLowerCase();
   const dateRange = [formatDate(startDate), formatDate(endDate)].filter(Boolean).join(' – ');
-  const studioUrl = isAdmin && authoringBaseUrl
-    ? `${authoringBaseUrl.replace(/\/$/, '')}/authoring/programs/${id}`
-    : null;
 
   const bannerStyle = cardImage
     ? { backgroundImage: `url(${cardImage})` }
     : undefined;
 
+  const cardContent = (
+    <>
+      <div className="program-card__banner" style={bannerStyle}>
+        {!cardImage && (
+          <div className="program-card__banner-placeholder">
+            {(name || '?').split(' ').slice(0, 2)
+              .map((w) => w[0]).join('')
+              .toUpperCase()}
+          </div>
+        )}
+        <div className="program-card__badges">
+          {org && <span className="program-card__badge">{org}</span>}
+          {programType && <span className="program-card__badge">{programType}</span>}
+          {batch && <span className="program-card__badge">{batch}</span>}
+        </div>
+        {statusKey && (
+          <div className="program-card__status">
+            <Badge variant={STATUS_VARIANTS[statusKey] || 'light'}>
+              {STATUS_LABELS[statusKey] || status}
+            </Badge>
+          </div>
+        )}
+      </div>
+
+      <div className="program-card__body">
+        <h5 className="program-card__title">{name}</h5>
+        {dateRange && <p className="program-card__meta">{dateRange}</p>}
+        <p className="program-card__stats">
+          {`${courseCount} course${courseCount !== 1 ? 's' : ''}`}
+          {enrolledAt && ` · Enrolled ${formatDate(enrolledAt)}`}
+        </p>
+        {description
+          ? <p className="program-card__description">{description}</p>
+          : <div className="program-card__spacer" />}
+      </div>
+    </>
+  );
+
   return (
     <div className="program-card">
-      <Link to={`/${id}/${defaultSlug}`} className="program-card__link">
-        <div className="program-card__banner" style={bannerStyle}>
-          {!cardImage && (
-            <div className="program-card__banner-placeholder">
-              {(name || '?').split(' ').slice(0, 2)
-                .map((w) => w[0]).join('')
-                .toUpperCase()}
-            </div>
-          )}
-          <div className="program-card__badges">
-            {org && <span className="program-card__badge">{org}</span>}
-            {programType && <span className="program-card__badge">{programType}</span>}
-            {batch && <span className="program-card__badge">{batch}</span>}
-          </div>
-          {statusKey && (
-            <div className="program-card__status">
-              <Badge variant={STATUS_VARIANTS[statusKey] || 'light'}>
-                {STATUS_LABELS[statusKey] || status}
-              </Badge>
-            </div>
-          )}
-        </div>
-
-        <div className="program-card__body">
-          <h5 className="program-card__title">{name}</h5>
-          {dateRange && <p className="program-card__meta">{dateRange}</p>}
-          <p className="program-card__stats">
-            {`${courseCount} course${courseCount !== 1 ? 's' : ''}`}
-            {enrolledAt && ` · Enrolled ${formatDate(enrolledAt)}`}
-          </p>
-          {description
-            ? <p className="program-card__description">{description}</p>
-            : <div className="program-card__spacer" />}
-        </div>
-      </Link>
-
-      {isAdmin && studioUrl && (
-        <div className="program-card__footer">
-          <a
-            href={studioUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="btn btn-outline-secondary btn-sm w-100"
-            onClick={(e) => e.stopPropagation()}
-          >
-            Manage in Studio ↗
-          </a>
-        </div>
+      {studioUrl ? (
+        <a href={studioUrl} className="program-card__link">{cardContent}</a>
+      ) : (
+        <Link to={`/${id}/${defaultSlug}`} className="program-card__link">{cardContent}</Link>
       )}
     </div>
   );
@@ -110,9 +101,8 @@ ProgramCard.propTypes = {
     courseCount: PropTypes.number,
     enrolledAt: PropTypes.string,
   }).isRequired,
-  isAdmin: PropTypes.bool,
-  authoringBaseUrl: PropTypes.string,
   defaultSlug: PropTypes.string,
+  studioUrl: PropTypes.string,
 };
 
 export default ProgramCard;

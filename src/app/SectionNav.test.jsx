@@ -37,7 +37,7 @@ const mockLayout = (stripWidth) => {
 const LocationProbe = () => <span data-testid="pathname">{useLocation().pathname}</span>;
 
 const renderNav = ({
-  role = USER_ROLE.ADMIN, stripWidth = 2000, section = 'courses',
+  role = USER_ROLE.LEARNER, stripWidth = 2000, section = 'courses',
 } = {}) => {
   useConfig.mockReturnValue({ data: { user_role: role } });
   mockLayout(stripWidth);
@@ -81,7 +81,7 @@ describe('SectionNav', () => {
     renderNav();
 
     expect(stripLabels()).toEqual([
-      'Courses', 'Calendar', 'Requests', 'Attendance', 'Locations', 'Holidays',
+      'Courses', 'Calendar', 'Requests', 'Attendance', 'Certificate',
     ]);
   });
 
@@ -118,7 +118,7 @@ describe('SectionNav', () => {
     expect(stripLabels()).toEqual(['Courses', 'Calendar', 'Requests']);
     expect(moreTab()).not.toHaveClass('pgn__tab_invisible');
     expect(openMore().map((el) => el.textContent))
-      .toEqual(['Attendance', 'Locations', 'Holidays']);
+      .toEqual(['Attendance', 'Certificate']);
   });
 
   it('routes from the "More..." dropdown too', () => {
@@ -127,16 +127,16 @@ describe('SectionNav', () => {
     const items = openMore();
     fireEvent.click(items[1]);
 
-    expect(pathname()).toBe(`/${PROGRAM_ID}/locations`);
+    expect(pathname()).toBe(`/${PROGRAM_ID}/certificate`);
   });
 
   // The visible marker comes from the `:has` rule in programs.scss; this
   // asserts the DOM state that rule keys on.
   it('leaves the current section flagged active even once it has overflowed', () => {
-    renderNav({ stripWidth: 400, section: 'holidays' });
+    renderNav({ stripWidth: 400, section: 'certificate' });
 
-    expect(stripLabels()).not.toContain('Holidays');
-    expect(activeTab()).toHaveTextContent('Holidays');
+    expect(stripLabels()).not.toContain('Certificate');
+    expect(activeTab()).toHaveTextContent('Certificate');
     expect(activeTab()).toHaveClass('pgn__tab_invisible');
   });
 
@@ -163,7 +163,7 @@ describe('SectionNav', () => {
 
     expect(stripLabels()).toEqual(['Courses', 'Calendar', 'Requests', 'Attendance']);
 
-    useConfig.mockReturnValue({ data: { user_role: USER_ROLE.ADMIN } });
+    useConfig.mockReturnValue({ data: { user_role: USER_ROLE.LEARNER } });
     rerender(
       <MemoryRouter initialEntries={[`/${PROGRAM_ID}/courses`]}>
         <Routes>
@@ -172,9 +172,9 @@ describe('SectionNav', () => {
       </MemoryRouter>,
     );
 
-    // 2000px fits all six comfortably, so nothing belongs in the dropdown.
+    // 2000px fits all five comfortably, so nothing belongs in the dropdown.
     expect(stripLabels()).toEqual([
-      'Courses', 'Calendar', 'Requests', 'Attendance', 'Locations', 'Holidays',
+      'Courses', 'Calendar', 'Requests', 'Attendance', 'Certificate',
     ]);
     expect(moreTab()).toHaveClass('pgn__tab_invisible');
   });
@@ -183,6 +183,13 @@ describe('SectionNav', () => {
     renderNav({ role: USER_ROLE.INSTRUCTOR });
 
     expect(stripLabels()).toEqual(['Courses', 'Calendar', 'Requests']);
+  });
+
+  it('has no Locations or Holidays sections (admins manage those in Studio)', () => {
+    renderNav();
+
+    expect(stripLabels()).not.toContain('Locations');
+    expect(stripLabels()).not.toContain('Holidays');
   });
 
   it('offers the learner-only Certificate section to learners', () => {

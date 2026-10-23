@@ -63,20 +63,6 @@ export const withdrawRequest = async (requestId) => {
 };
 
 /**
- * Admin bulk-approves a set of pending leave requests.
- *
- * POST /v1/requests/leave/bulk-approve/
- */
-export const bulkApproveLeaves = async ({ program_key, leave_ids }) => {
-  const client = getAuthenticatedHttpClient();
-  const { data } = await client.post(`${getBaseUrl()}/requests/leave/bulk-approve/`, {
-    program_key,
-    leave_ids,
-  });
-  return data;
-};
-
-/**
  * List requests of one type, with the server doing the paging.
  *
  * `type` is always supplied: every route into the requests views pins one
@@ -107,90 +93,6 @@ const fetchRequests = async ({
 };
 
 /**
- * Admin lists a programme's requests of one type.
- *
- * GET /v1/requests/{leave|remote-session}/?program_key=…
- */
-export const getRequests = fetchRequests;
-
-/**
- * Learner lists their own requests (server auto-scopes by role).
- * Alias of getRequests.
+ * Learner or instructor lists their own requests (server auto-scopes by role).
  */
 export const getMyRequests = fetchRequests;
-
-/**
- * Admin approves or rejects a pending request.
- *
- * PATCH /v1/requests/leave/{id}/review/  or  PATCH /v1/requests/remote-session/{id}/review/
- */
-export const reviewRequest = async (requestId, { state, reviewer_note = '' }, requestType) => {
-  const client = getAuthenticatedHttpClient();
-  const { data } = await client.patch(
-    typeUrl(requestType, `${requestId}/review/`),
-    { state, reviewer_note },
-  );
-  return data;
-};
-
-// ─── Substitute Requests ─────────────────────────────────────────────────────
-
-const substituteUrl = (suffix = '') => `${getBaseUrl()}/substitute-requests/${suffix}`;
-
-export const getSubstituteRequests = async ({
-  // eslint-disable-next-line camelcase
-  program_key, status, date_from, date_to, page, page_size,
-}) => {
-  // eslint-disable-next-line camelcase
-  const params = new URLSearchParams({ program_key });
-  if (status) { params.set('status', status); }
-  // eslint-disable-next-line camelcase
-  if (date_from) { params.set('date_from', date_from); }
-  // eslint-disable-next-line camelcase
-  if (date_to) { params.set('date_to', date_to); }
-  if (page) { params.set('page', String(page)); }
-  // eslint-disable-next-line camelcase
-  if (page_size) { params.set('page_size', String(page_size)); }
-  const { data } = await getAuthenticatedHttpClient().get(`${substituteUrl()}?${params}`);
-  return data;
-};
-
-// eslint-disable-next-line camelcase
-export const assignSubstitute = async (id, substitute_instructor_email) => {
-  const { data } = await getAuthenticatedHttpClient().post(
-    substituteUrl(`${id}/assign/`),
-    // eslint-disable-next-line camelcase
-    { substitute_instructor_email },
-  );
-  return data;
-};
-
-export const closeSubstituteRequest = async (id) => {
-  const { data } = await getAuthenticatedHttpClient().post(substituteUrl(`${id}/close/`));
-  return data;
-};
-
-export const getSubstituteRequest = async (id) => {
-  const { data } = await getAuthenticatedHttpClient().get(substituteUrl(`${id}/`));
-  return data;
-};
-
-// ─── Tab badge counts ────────────────────────────────────────────────────────
-
-/**
- * Outstanding work per Requests tab for one programme.
- *
- * One call rather than three list requests whose payloads would be discarded.
- * The counts come from the same rules the tabs themselves use, so a badge can
- * never disagree with what opening the tab shows — or with the Needs attention
- * dashboard card, which reads the same definitions.
- *
- * Returns `{ leaves, remote_sessions, substitute_requests }`.
- */
-export const getRequestCounts = async (programKey) => {
-  const params = new URLSearchParams({ program_key: programKey });
-  const { data } = await getAuthenticatedHttpClient().get(
-    `${getBaseUrl()}/requests/counts/?${params.toString()}`,
-  );
-  return data;
-};

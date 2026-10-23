@@ -19,7 +19,7 @@ const { useConfig } = require('@edly-io/frontend-component-fbr');
 const wrap = (userRole) => {
   useConfig.mockReturnValue({ data: { user_role: userRole } });
   return render(
-    <MemoryRouter initialEntries={['/test-prog/attendance/by-course']}>
+    <MemoryRouter initialEntries={['/test-prog/attendance/me']}>
       <Routes>
         <Route
           path="/:programId/attendance"
@@ -29,8 +29,9 @@ const wrap = (userRole) => {
             </IntlProvider>
           )}
         >
-          <Route path="by-course" element={<div>By Course Outlet</div>} />
+          <Route path="me" element={<div>My Attendance Outlet</div>} />
         </Route>
+        <Route path="/:programId/calendar" element={<div>Calendar</div>} />
       </Routes>
     </MemoryRouter>,
   );
@@ -38,18 +39,22 @@ const wrap = (userRole) => {
 
 beforeEach(() => jest.clearAllMocks());
 
-it('renders the admin sub-nav for admin users', () => {
-  wrap('admin');
-  expect(screen.getByRole('navigation', { name: /attendance sub-sections/i })).toBeInTheDocument();
-  expect(screen.getByText('By Course')).toBeInTheDocument();
-});
-
 it('does not render sub-nav for learner', () => {
   wrap('learner');
   expect(screen.queryByRole('navigation', { name: /attendance sub-sections/i })).not.toBeInTheDocument();
 });
 
-it('renders the outlet content', () => {
-  wrap('admin');
-  expect(screen.getByText('By Course Outlet')).toBeInTheDocument();
+it('renders the outlet content for a learner', () => {
+  wrap('learner');
+  expect(screen.getByText('My Attendance Outlet')).toBeInTheDocument();
+});
+
+it('sends an instructor to the calendar', () => {
+  wrap('instructor');
+  expect(screen.getByText('Calendar')).toBeInTheDocument();
+});
+
+it('has no audit log toggle', () => {
+  wrap('learner');
+  expect(screen.queryByRole('button', { name: /audit log/i })).not.toBeInTheDocument();
 });

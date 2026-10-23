@@ -10,8 +10,9 @@ import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import ProgramsListPage from './ProgramsListPage';
 
 jest.mock('@edx/frontend-platform/auth');
+// Mock without requireActual: the real module loads env.config.js, which
+// imports @edx/frontend-platform back while it is still initialising.
 jest.mock('@edx/frontend-platform', () => ({
-  ...jest.requireActual('@edx/frontend-platform'),
   getConfig: jest.fn(),
 }));
 jest.mock('@edly-io/frontend-component-fbr', () => ({
@@ -43,7 +44,7 @@ const mockClient = { get: jest.fn() };
 const programRequests = () => mockClient.get.mock.calls.filter(([url]) => url === PROGRAMS_URL);
 const lastParams = () => new URLSearchParams(programRequests().at(-1)[1].params);
 
-const renderPage = (role = USER_ROLE.ADMIN) => {
+const renderPage = (role = USER_ROLE.LEARNER) => {
   useConfig.mockReturnValue({ data: { user_role: role } });
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
@@ -87,14 +88,14 @@ describe('ProgramsListPage', () => {
     expect(screen.getByRole('navigation', { name: 'Programs pagination' })).toBeInTheDocument();
   });
 
-  it('sorts admins A-Z by default', async () => {
-    renderPage(USER_ROLE.ADMIN);
-    await screen.findByText('Alpha Program');
-    expect(lastParams().toString()).toBe('page=1&page_size=20&ordering=name');
-  });
-
   it('sorts trainees by latest enrollment by default', async () => {
     renderPage(USER_ROLE.LEARNER);
+    await screen.findByText('Alpha Program');
+    expect(lastParams().toString()).toBe('page=1&page_size=20&ordering=-learner_enrolled_at');
+  });
+
+  it('sorts instructors by latest enrollment by default', async () => {
+    renderPage(USER_ROLE.INSTRUCTOR);
     await screen.findByText('Alpha Program');
     expect(lastParams().get('ordering')).toBe('-learner_enrolled_at');
   });
@@ -130,5 +131,37 @@ describe('ProgramsListPage', () => {
       await waitFor(() => expect(lastParams().get('ordering')).toBe('-name'));
       expect(lastParams().get('page')).toBe('1');
     });
+  });
+});
+
+describe('ProgramsListPage cards', () => {
+  const cardLink = async () => (await screen.findByText('Alpha Program')).closest('a');
+  const KEY = 'program-v1:FBR+STP+AlphaProgram';
+
+  it('opens the program in Studio for an admin', async () => {
+    getConfig.mockReturnValue({ STUDIO_BASE_URL: STUDIO, AUTHORING_BASE_URL: 'http://apps.test/' });
+    renderPage('admin');
+
+    expect(await cardLink()).toHaveAttribute('href', `http://apps.test/authoring/programs/${KEY}`);
+  });
+
+  it('opens the program courses page in fbr-home for a trainee', async () => {
+    getConfig.mockReturnValue({ STUDIO_BASE_URL: STUDIO, AUTHORING_BASE_URL: 'http://apps.test/' });
+    renderPage(USER_ROLE.LEARNER);
+
+    expect(await cardLink()).toHaveAttribute('href', `/${KEY}/courses`);
+  });
+
+  it('opens the program courses page in fbr-home for an instructor', async () => {
+    getConfig.mockReturnValue({ STUDIO_BASE_URL: STUDIO, AUTHORING_BASE_URL: 'http://apps.test/' });
+    renderPage(USER_ROLE.INSTRUCTOR);
+
+    expect(await cardLink()).toHaveAttribute('href', `/${KEY}/courses`);
+  });
+
+  it('falls back to the fbr-home link for an admin when AUTHORING_BASE_URL is unset', async () => {
+    renderPage('admin');
+
+    expect(await cardLink()).toHaveAttribute('href', `/${KEY}/courses`);
   });
 });

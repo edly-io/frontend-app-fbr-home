@@ -9,6 +9,20 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from '../messages';
 import { formatDate } from '../utils';
 
+// Absolute links (Studio, for admins) leave the MFE; relative ones stay in it.
+// A null link (Studio URL not configured) renders no button rather than a broken one.
+const SessionLink = ({ href = null }) => {
+  if (!href) { return null; }
+  if (/^https?:\/\//.test(href)) {
+    return <a href={href} className="btn btn-outline-secondary btn-sm">Mark →</a>;
+  }
+  return <Link to={href} className="btn btn-outline-secondary btn-sm">Mark →</Link>;
+};
+
+SessionLink.propTypes = {
+  href: PropTypes.string,
+};
+
 const AttendanceToMarkCard = ({ sessions, getSessionLink = null }) => {
   const intl = useIntl();
   const getAgeLabel = (ageDays) => {
@@ -53,12 +67,9 @@ const AttendanceToMarkCard = ({ sessions, getSessionLink = null }) => {
                     {intl.formatMessage(messages.unmarkedCount, { count: session.unmarked_count })}
                   </Badge>
                   {session.program_key && (
-                    <Link
-                      to={getSessionLink ? getSessionLink(session) : `/${session.program_key}/attendance`}
-                      className="btn btn-outline-secondary btn-sm"
-                    >
-                      Mark →
-                    </Link>
+                    <SessionLink
+                      href={getSessionLink ? getSessionLink(session) : `/${session.program_key}/attendance`}
+                    />
                   )}
                 </div>
               </article>

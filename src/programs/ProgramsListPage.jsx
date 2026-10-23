@@ -5,9 +5,9 @@ import {
   Spinner, Alert, Pagination,
 } from '@openedx/paragon';
 import { FooterSlot } from '@edx/frontend-component-footer';
-import { getConfig } from '@edx/frontend-platform';
 import { DebouncedSearch, useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import HeaderSlot from '../plugin-slots/HeaderSlot';
+import { getStudioProgramUrl } from '../app/studioUrls';
 import ProgramCard from './ProgramCard';
 import { usePrograms } from '../app/hooks';
 
@@ -18,11 +18,6 @@ const STATUS_OPTIONS = [
   { value: 'freezed', label: 'Freezed' },
 ];
 
-const SORT_OPTIONS_ADMIN = [
-  { value: 'az', label: 'Name A–Z' },
-  { value: 'za', label: 'Name Z–A' },
-];
-
 const PAGE_SIZE = 20;
 
 const ORDERING_BY_SORT = {
@@ -31,7 +26,7 @@ const ORDERING_BY_SORT = {
   za: '-name',
 };
 
-const SORT_OPTIONS_LEARNER = [
+const SORT_OPTIONS = [
   { value: 'enrolled', label: 'Last Enrolled' },
   { value: 'az', label: 'Name A–Z' },
   { value: 'za', label: 'Name Z–A' },
@@ -39,27 +34,18 @@ const SORT_OPTIONS_LEARNER = [
 
 const ProgramsListPage = () => {
   const { data: config } = useConfig();
+  // Admins manage programs in Studio, so their cards open the program there.
   const isAdmin = config?.user_role === USER_ROLE.ADMIN;
-  const authoringBaseUrl = getConfig().AUTHORING_BASE_URL || null;
 
   const defaultSlug = 'courses';
 
-  const defaultSort = isAdmin ? 'az' : 'enrolled';
+  const defaultSort = 'enrolled';
   const [search, setSearch] = useState('');
   const [statusFilters, setStatusFilters] = useState(new Set());
   const [sortOrder, setSortOrder] = useState('');
   const [refineOpen, setRefineOpen] = useState(false);
   const [page, setPage] = useState(1);
   const refineRef = useRef(null);
-
-  // Sync sortOrder to the correct default once the user role is known.
-  // On first render config is undefined, so isAdmin is false and defaultSort
-  // would be 'enrolled'; resetting here avoids a stale value showing as active.
-  useEffect(() => {
-    if (config !== undefined) {
-      setSortOrder((prev) => (prev === '' ? defaultSort : prev));
-    }
-  }, [config]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!refineOpen) { return undefined; }
@@ -125,14 +111,10 @@ const ProgramsListPage = () => {
             ) : (
               <>
                 <h5 className="programs-empty__title">No programs assigned yet</h5>
-                {isAdmin ? (
-                  <p className="text-muted mb-0">No programs have been created yet. Create one in Studio.</p>
-                ) : (
-                  <p className="text-muted mb-0">
-                    You haven&apos;t been enrolled in any programs yet.
-                    Please contact your administrator.
-                  </p>
-                )}
+                <p className="text-muted mb-0">
+                  You haven&apos;t been enrolled in any programs yet.
+                  Please contact your administrator.
+                </p>
               </>
             )}
           </div>
@@ -147,9 +129,8 @@ const ProgramsListPage = () => {
             <ProgramCard
               key={program.id}
               program={program}
-              isAdmin={isAdmin}
-              authoringBaseUrl={authoringBaseUrl}
               defaultSlug={defaultSlug}
+              studioUrl={isAdmin ? getStudioProgramUrl(program.id) : null}
             />
           ))}
         </div>
@@ -169,14 +150,12 @@ const ProgramsListPage = () => {
     );
   };
 
-  const pageTitle = isAdmin ? 'Programs' : 'My Programs';
-
   return (
     <>
       <HeaderSlot />
       <main id="main-content" className="container-fluid d-flex flex-column flex-grow-1">
         <div className="programs-page">
-          <h1 className="programs-page__title">{pageTitle}</h1>
+          <h1 className="programs-page__title">My Programs</h1>
 
           {!loading && !error && (
             <div className="programs-filter-bar">
@@ -225,7 +204,7 @@ const ProgramsListPage = () => {
 
                     <div className="programs-refine__col">
                       <p className="programs-refine__heading">Sort</p>
-                      {(isAdmin ? SORT_OPTIONS_ADMIN : SORT_OPTIONS_LEARNER).map(({ value, label }) => (
+                      {SORT_OPTIONS.map(({ value, label }) => (
                         <label key={value} className="programs-refine__row">
                           <input
                             type="radio"
