@@ -153,11 +153,12 @@ const ProgramsListPage = () => {
             />
           ))}
         </div>
-        <div className="d-flex flex-wrap justify-content-between align-items-center mt-4">
-          <span className="small text-muted">
+        <div className="programs-pagination">
+          <span className="programs-pagination__status">
             {`Showing ${firstRow} - ${firstRow + programs.length - 1} of ${count}.`}
           </span>
           <Pagination
+            size="small"
             paginationLabel="Programs pagination"
             pageCount={numPages}
             currentPage={page}
