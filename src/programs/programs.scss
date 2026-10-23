@@ -223,6 +223,31 @@ $programs-grid-gap: 1.5rem;
   }
 }
 
+// One step quieter than a card: the card's surface and radius, edged with a
+// hairline instead of the card's shadow. Side padding matches
+// `.program-card__body`, so the status text lines up with the card text above.
+.programs-pagination {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  margin-top: $programs-grid-gap;
+  padding: .625rem 1.125rem;
+  border-radius: 8px;
+  border: 1px solid var(--sessions-border);
+  background: var(--sessions-surface);
+
+  @media (--pgn-size-breakpoint-min-width-sm) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  &__status {
+    font-size: .875rem;
+    color: var(--sessions-text-muted);
+  }
+}
+
 .programs-empty {
   display: flex;
   justify-content: center;

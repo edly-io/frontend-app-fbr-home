@@ -45,29 +45,51 @@ export const submitFeedback = async (requestId, payload) => {
   return data;
 };
 
-export const getPrograms = async () => {
+const getProgramsBaseUrl = () => `${getConfig().STUDIO_BASE_URL}/fbr/api/programs`;
+
+const toProgram = (p) => ({
+  id: p.program_key,
+  name: p.name,
+  programType: p.program_type,
+  org: p.organization,
+  batch: p.batch,
+  status: p.status,
+  startDate: p.start_date,
+  endDate: p.end_date,
+  description: p.description,
+  cardImage: p.card_image || null,
+  enrolledAt: p.learner_enrolled_at || null,
+  courseCount: p.course_count ?? 0,
+});
+
+/**
+ * One page of the caller's programs. URLSearchParams keeps a repeated `status`
+ * as `status=a&status=b`, the form the API reads (axios would send `status[]`).
+ */
+export const getPrograms = async ({
+  page, pageSize, search, statuses, ordering,
+}) => {
+  const params = new URLSearchParams({ page: String(page), page_size: String(pageSize), ordering });
+  if (search.trim()) { params.append('search', search.trim()); }
+  statuses.forEach((status) => params.append('status', status));
   const client = getAuthenticatedHttpClient();
-  const { data } = await client.get(`${getConfig().STUDIO_BASE_URL}/fbr/api/programs/`);
-  const list = Array.isArray(data) ? data : data.results ?? [];
-  return list.map((p) => ({
-    id: p.program_key,
-    name: p.name,
-    programType: p.program_type,
-    org: p.organization,
-    batch: p.batch,
-    status: p.status,
-    startDate: p.start_date,
-    endDate: p.end_date,
-    description: p.description,
-    cardImage: p.card_image || null,
-    enrolledAt: p.learner_enrolled_at || null,
-    courseCount: p.course_count ?? 0,
-  }));
+  const { data } = await client.get(`${getProgramsBaseUrl()}/`, { params });
+  return {
+    results: data.results.map(toProgram),
+    count: data.pagination.count,
+    numPages: data.pagination.num_pages,
+  };
+};
+
+export const getProgram = async (programKey) => {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.get(`${getProgramsBaseUrl()}/${encodeURIComponent(programKey)}/`);
+  return toProgram(data);
 };
 
 export const updateProgram = async (programKey, payload) => {
   const client = getAuthenticatedHttpClient();
-  const { data } = await client.patch(`${getConfig().STUDIO_BASE_URL}/fbr/api/programs/${programKey}/`, payload);
+  const { data } = await client.patch(`${getProgramsBaseUrl()}/${programKey}/`, payload);
   return data;
 };
 

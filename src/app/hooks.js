@@ -1,33 +1,44 @@
 import { useEffect, useState } from 'react';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { fetchProgramCourses } from '@edly-io/frontend-component-fbr';
 import {
+  getProgram,
   getPrograms,
   getLearnerCourseMap,
   getMyCertificate,
   getCertificateVerification,
 } from './api';
 
-export const usePrograms = () => {
-  const [programs, setPrograms] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+/** One page of programs; the previous page stays on screen while the next loads. */
+export const usePrograms = (query) => {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['programs', query],
+    queryFn: () => getPrograms(query),
+    placeholderData: keepPreviousData,
+  });
+  return {
+    programs: data?.results ?? [],
+    count: data?.count ?? 0,
+    numPages: data?.numPages ?? 1,
+    loading: isLoading,
+    error: error ? (error.message || 'Failed to load programs') : '',
+  };
+};
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const data = await getPrograms();
-        if (!cancelled) { setPrograms(data); }
-      } catch (err) {
-        if (!cancelled) { setError(err?.message || 'Failed to load programs'); }
-      } finally {
-        if (!cancelled) { setLoading(false); }
-      }
-    })();
-    return () => { cancelled = true; };
-  }, []);
-
-  return { programs, loading, error };
+/** A single program by key. `notFound` covers both a missing program and one outside the caller's scope. */
+export const useProgram = (programKey) => {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['program', programKey],
+    queryFn: () => getProgram(programKey),
+    enabled: !!programKey,
+    retry: false,
+  });
+  return {
+    program: data ?? null,
+    loading: isLoading,
+    error: error ? (error.message || 'Failed to load program') : '',
+    notFound: error?.response?.status === 404,
+  };
 };
 
 export const useProgramCourses = (programKey) => {

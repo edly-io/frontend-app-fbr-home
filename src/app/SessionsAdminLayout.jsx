@@ -12,7 +12,7 @@ import { getConfig } from '@edx/frontend-platform';
 import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import HeaderSlot from '../plugin-slots/HeaderSlot';
 import SectionNav from './SectionNav';
-import { usePrograms } from './hooks';
+import { useProgram } from './hooks';
 
 const STATUS_VARIANTS = {
   active: 'success',
@@ -35,19 +35,18 @@ const formatDate = (dateStr) => {
 
 const SessionsAdminLayout = ({ children = null }) => {
   const { programId } = useParams();
-  const { programs, loading, error } = usePrograms();
+  const {
+    program, loading, error, notFound,
+  } = useProgram(programId);
   const { data: config } = useConfig();
   const isAdmin = config?.user_role === USER_ROLE.ADMIN;
   const authoringBaseUrl = getConfig().AUTHORING_BASE_URL || null;
 
-  // Redirect stale/invalid program IDs back to the programs list.
-  const isStaleUrl = !loading && !error && programs.length > 0
-    && programId && !programs.find((p) => p.id === programId);
-  if (isStaleUrl) {
+  // A program that doesn't exist, or that the caller can't access, sends them back to the list.
+  if (notFound) {
     return <Navigate to="/" replace />;
   }
 
-  const program = programs.find((p) => p.id === programId) || null;
   const statusKey = (program?.status || '').toLowerCase();
   const studioUrl = isAdmin && authoringBaseUrl && programId
     ? `${authoringBaseUrl.replace(/\/$/, '')}/authoring/programs/${programId}`
@@ -60,7 +59,7 @@ const SessionsAdminLayout = ({ children = null }) => {
   const metaLine = [subtitle, dateRange].filter(Boolean).join('  ·  ');
 
   const renderContent = () => {
-    if (loading || error || !programs.length) { return null; }
+    if (loading || error || !program) { return null; }
     return children ?? <Outlet />;
   };
 

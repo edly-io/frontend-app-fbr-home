@@ -3,17 +3,15 @@ import { useParams } from 'react-router-dom';
 import { Spinner, Alert } from '@openedx/paragon';
 import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import CourseCard from './CourseCard';
-import { useProgramCourses, usePrograms, useLearnerCourseMap } from '../app/hooks';
+import { useProgramCourses, useProgram, useLearnerCourseMap } from '../app/hooks';
 
 const ProgramCoursesPage = () => {
   const { programId } = useParams();
   const { courses, loading, error } = useProgramCourses(programId);
-  const { programs } = usePrograms();
+  const { program } = useProgram(programId);
   const { data: config } = useConfig();
   const { courseMap } = useLearnerCourseMap();
   const isInstructor = config?.user_role === USER_ROLE.INSTRUCTOR;
-
-  const program = programs.find((p) => p.id === programId) || null;
 
   if (loading) {
     return (
