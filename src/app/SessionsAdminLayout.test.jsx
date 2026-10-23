@@ -10,8 +10,9 @@ import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import SessionsAdminLayout from './SessionsAdminLayout';
 
 jest.mock('@edx/frontend-platform/auth');
+// Mock without requireActual: the real module loads env.config.js, which
+// imports @edx/frontend-platform back while it is still initialising.
 jest.mock('@edx/frontend-platform', () => ({
-  ...jest.requireActual('@edx/frontend-platform'),
   getConfig: jest.fn(),
 }));
 jest.mock('@edly-io/frontend-component-fbr', () => ({
