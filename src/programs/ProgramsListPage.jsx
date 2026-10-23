@@ -1,12 +1,12 @@
 import React, {
-  useState, useMemo, useRef, useEffect,
+  useState, useRef, useEffect,
 } from 'react';
 import {
-  Spinner, Alert, SearchField,
+  Spinner, Alert, Pagination,
 } from '@openedx/paragon';
 import { FooterSlot } from '@edx/frontend-component-footer';
 import { getConfig } from '@edx/frontend-platform';
-import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
+import { DebouncedSearch, useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import HeaderSlot from '../plugin-slots/HeaderSlot';
 import ProgramCard from './ProgramCard';
 import { usePrograms } from '../app/hooks';
@@ -23,6 +23,12 @@ const SORT_OPTIONS_ADMIN = [
   { value: 'za', label: 'Name Z–A' },
 ];
 
+const ORDERING_BY_SORT = {
+  enrolled: '-learner_enrolled_at',
+  az: 'name',
+  za: '-name',
+};
+
 const SORT_OPTIONS_LEARNER = [
   { value: 'enrolled', label: 'Last Enrolled' },
   { value: 'az', label: 'Name A–Z' },
@@ -30,7 +36,6 @@ const SORT_OPTIONS_LEARNER = [
 ];
 
 const ProgramsListPage = () => {
-  const { programs, loading, error } = usePrograms();
   const { data: config } = useConfig();
   const isAdmin = config?.user_role === USER_ROLE.ADMIN;
   const authoringBaseUrl = getConfig().AUTHORING_BASE_URL || null;
@@ -42,6 +47,7 @@ const ProgramsListPage = () => {
   const [statusFilters, setStatusFilters] = useState(new Set());
   const [sortOrder, setSortOrder] = useState('');
   const [refineOpen, setRefineOpen] = useState(false);
+  const [page, setPage] = useState(1);
   const refineRef = useRef(null);
 
   // Sync sortOrder to the correct default once the user role is known.
@@ -64,47 +70,29 @@ const ProgramsListPage = () => {
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, [refineOpen]);
 
+  // A new search, filter or sort starts again from the first page.
+  const changeSearch = (value) => { setSearch(value); setPage(1); };
+  const changeSortOrder = (value) => { setSortOrder(value); setPage(1); };
   const toggleStatus = (value) => {
     setStatusFilters((prev) => {
       const next = new Set(prev);
       if (next.has(value)) { next.delete(value); } else { next.add(value); }
       return next;
     });
+    setPage(1);
   };
 
-  const filteredPrograms = useMemo(() => {
-    let list = [...programs];
-
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      list = list.filter((p) => p.name.toLowerCase().includes(q));
-    }
-
-    if (statusFilters.size > 0) {
-      list = list.filter((p) => statusFilters.has(p.status ?? 'draft'));
-    }
-
-    const effectiveSort = sortOrder || defaultSort;
-    if (effectiveSort === 'enrolled') {
-      list.sort((a, b) => {
-        if (!a.enrolledAt && !b.enrolledAt) { return 0; }
-        if (!a.enrolledAt) { return 1; }
-        if (!b.enrolledAt) { return -1; }
-        return b.enrolledAt.localeCompare(a.enrolledAt);
-      });
-    } else {
-      list.sort((a, b) => (
-        effectiveSort === 'az'
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name)
-      ));
-    }
-
-    return list;
-  }, [programs, search, statusFilters, sortOrder]);
+  const effectiveSortOrder = sortOrder || defaultSort;
+  const {
+    programs, numPages, loading, error,
+  } = usePrograms({
+    page,
+    search,
+    statuses: STATUS_OPTIONS.map(({ value }) => value).filter((value) => statusFilters.has(value)),
+    ordering: ORDERING_BY_SORT[effectiveSortOrder],
+  });
 
   const hasActiveFilter = search.trim() || statusFilters.size > 0;
-  const effectiveSortOrder = sortOrder || defaultSort;
   const activeRefineCount = statusFilters.size + (effectiveSortOrder !== defaultSort ? 1 : 0);
 
   const renderBody = () => {
@@ -120,7 +108,7 @@ const ProgramsListPage = () => {
       return <Alert variant="danger">{error}</Alert>;
     }
 
-    if (!filteredPrograms.length) {
+    if (!programs.length) {
       return (
         <div className="programs-empty">
           <div className="programs-empty__card">
@@ -148,17 +136,28 @@ const ProgramsListPage = () => {
     }
 
     return (
-      <div className="programs-grid">
-        {filteredPrograms.map((program) => (
-          <ProgramCard
-            key={program.id}
-            program={program}
-            isAdmin={isAdmin}
-            authoringBaseUrl={authoringBaseUrl}
-            defaultSlug={defaultSlug}
+      <>
+        <div className="programs-grid">
+          {programs.map((program) => (
+            <ProgramCard
+              key={program.id}
+              program={program}
+              isAdmin={isAdmin}
+              authoringBaseUrl={authoringBaseUrl}
+              defaultSlug={defaultSlug}
+            />
+          ))}
+        </div>
+        {numPages > 1 && (
+          <Pagination
+            className="d-flex justify-content-center mt-4"
+            paginationLabel="Programs pagination"
+            pageCount={numPages}
+            currentPage={page}
+            onPageSelect={setPage}
           />
-        ))}
-      </div>
+        )}
+      </>
     );
   };
 
@@ -173,9 +172,8 @@ const ProgramsListPage = () => {
 
           {!loading && !error && (
             <div className="programs-filter-bar">
-              <SearchField
-                onSubmit={setSearch}
-                onChange={setSearch}
+              <DebouncedSearch
+                onSearch={changeSearch}
                 value={search}
                 placeholder="Search programs..."
                 className="programs-filter-bar__search"
@@ -226,7 +224,7 @@ const ProgramsListPage = () => {
                             className="programs-refine__radio"
                             name="programs-sort"
                             checked={effectiveSortOrder === value}
-                            onChange={() => setSortOrder(value)}
+                            onChange={() => changeSortOrder(value)}
                           />
                           {label}
                         </label>
