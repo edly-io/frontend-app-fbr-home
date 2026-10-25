@@ -79,6 +79,18 @@ describe('ProgramsListPage', () => {
     expect(screen.getByText('Showing 21 - 21 of 21.')).toBeInTheDocument();
   });
 
+  it('stays on page 2 after the search debounce has passed', async () => {
+    renderPage();
+    await screen.findByText('Alpha Program');
+
+    fireEvent.click(screen.getByRole('button', { name: /next/i }));
+    await screen.findByText('Oldest Program');
+    await new Promise((resolve) => { setTimeout(resolve, 600); });
+
+    expect(lastParams().get('page')).toBe('2');
+    expect(screen.getByText('Oldest Program')).toBeInTheDocument();
+  });
+
   it('shows the row status and pagination control even with one page', async () => {
     mockClient.get.mockResolvedValue({ data: listPage(['Alpha Program', 'Bravo Program']) });
 
