@@ -1,5 +1,5 @@
 import React, {
-  useState, useRef, useEffect,
+  useState, useRef, useEffect, useCallback,
 } from 'react';
 import {
   Spinner, Alert, Pagination,
@@ -59,7 +59,11 @@ const ProgramsListPage = () => {
   }, [refineOpen]);
 
   // A new search, filter or sort starts again from the first page.
-  const changeSearch = (value) => { setSearch(value); setPage(1); };
+  // Must keep one identity across renders: Paragon's SearchField calls its
+  // onChange whenever that handler changes, and DebouncedSearch rebuilds the
+  // handler from onSearch. A fresh function here would re-submit the current
+  // search after every render and knock the list back to page 1.
+  const changeSearch = useCallback((value) => { setSearch(value); setPage(1); }, []);
   const changeSortOrder = (value) => { setSortOrder(value); setPage(1); };
   const toggleStatus = (value) => {
     setStatusFilters((prev) => {
