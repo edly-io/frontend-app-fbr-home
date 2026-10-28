@@ -23,23 +23,23 @@
   --sessions-divider: #F0F0F0;
   --sessions-text: #212529;
   --sessions-text-secondary: #495057;
-  --sessions-text-muted: #6C757D;
+  --sessions-text-muted: #5C636A;
   --sessions-text-subtle: #ADB5BD;
   --sessions-text-faint: #9CA3AF;
   // Accent text sitting directly on the page surface. The light values are
   // the ones already in use; the dark ones are lightened to stay legible on a
   // near-black ground, where the originals fall under 3:1.
   --sessions-text-danger: #DC2626;
-  --sessions-text-warning: #D97706;
+  --sessions-text-warning: #B45309;
   --sessions-text-success: #198754;
   // Role labels are small uppercase text on the page surface; the light
   // values are the shipped ones, the dark ones clear 3:1 on a near-black ground.
   --sessions-role-super-admin: #C53030;
-  --sessions-role-admin: #EA580C;
-  --sessions-role-middle-admin: #D97706;
+  --sessions-role-admin: #C2410C;
+  --sessions-role-middle-admin: #B45309;
   --sessions-role-data-admin: #2563EB;
-  --sessions-role-instructor: #16A34A;
-  --sessions-role-trainee: #6B7280;
+  --sessions-role-instructor: #15803D;
+  --sessions-role-trainee: #4B5563;
   --sessions-role-default: #4B5563;
   --sessions-panel-bg: #E1DDDB;
   --sessions-hover-tint: #F0F4FB;

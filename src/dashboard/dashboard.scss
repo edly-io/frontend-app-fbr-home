@@ -274,6 +274,14 @@
   }
 }
 
+.dashboard-stat-heading {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
 .admin-dashboard__stat-card,
 .instructor-dashboard__stat-card .pgn__card-section,
 .trainee-dashboard__stat-card .pgn__card-section {

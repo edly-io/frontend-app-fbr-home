@@ -109,12 +109,12 @@ const ProgramsListPage = () => {
           <div className="programs-empty__card">
             {hasActiveFilter ? (
               <>
-                <h5 className="programs-empty__title">No programs match your filters</h5>
+                <h2 className="programs-empty__title">No programs match your filters</h2>
                 <p className="text-muted mb-0">Try adjusting your search or status filter.</p>
               </>
             ) : (
               <>
-                <h5 className="programs-empty__title">No programs assigned yet</h5>
+                <h2 className="programs-empty__title">No programs assigned yet</h2>
                 <p className="text-muted mb-0">
                   You haven&apos;t been enrolled in any programs yet.
                   Please contact your administrator.
@@ -157,7 +157,7 @@ const ProgramsListPage = () => {
   return (
     <>
       <HeaderSlot />
-      <main id="main-content" className="container-fluid d-flex flex-column flex-grow-1">
+      <main id="main" className="container-fluid d-flex flex-column flex-grow-1">
         <div className="programs-page">
           <h1 className="programs-page__title">My Programs</h1>
 
