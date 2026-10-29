@@ -117,7 +117,7 @@ const AdminDashboardView = () => {
 
       <Row className="admin-dashboard__stats mb-3">
         {statCards.map(stat => (
-          <Col xs={6} lg={3} className="mb-3" key={stat.label}>
+          <Col xs={12} sm={6} lg={3} className="mb-3" key={stat.label}>
             <Card
               className={stat.showArrow ? 'dashboard-stat-card--clickable' : undefined}
               onClick={stat.showArrow ? () => scrollTo(stat.scrollId) : undefined}
@@ -127,8 +127,10 @@ const AdminDashboardView = () => {
                   <Icon src={stat.icon} />
                 </span>
                 <div>
-                  <strong className="admin-dashboard__stat-value">{stat.value}</strong>
-                  <span className="admin-dashboard__stat-label">{stat.label}</span>
+                  <h2 className="dashboard-stat-heading">
+                    <strong className="admin-dashboard__stat-value">{stat.value}</strong>
+                    <span className="admin-dashboard__stat-label">{stat.label}</span>
+                  </h2>
                   <span className={`dashboard-stat-scroll-arrow${stat.showArrow ? '' : ' dashboard-stat-scroll-arrow--hidden'}`} aria-hidden="true">↓ View below</span>
                 </div>
               </Card.Section>

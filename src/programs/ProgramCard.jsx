@@ -62,7 +62,7 @@ const ProgramCard = ({ program, defaultSlug = 'courses', studioUrl = null }) => 
       </div>
 
       <div className="program-card__body">
-        <h5 className="program-card__title">{name}</h5>
+        <h2 className="program-card__title">{name}</h2>
         {dateRange && <p className="program-card__meta">{dateRange}</p>}
         <p className="program-card__stats">
           {`${courseCount} course${courseCount !== 1 ? 's' : ''}`}

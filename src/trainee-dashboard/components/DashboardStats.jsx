@@ -56,11 +56,13 @@ const DashboardStats = ({ summary, onFeedbackClick = undefined }) => {
                 <span className={`trainee-dashboard__stat-icon trainee-dashboard__stat-icon--${stat.variant}`} aria-hidden="true">
                   <Icon src={stat.icon} />
                 </span>
-                <span>
-                  <strong className="trainee-dashboard__stat-value">{stat.value}</strong>
-                  <span className="trainee-dashboard__stat-label">{stat.label}</span>
+                <div>
+                  <h2 className="dashboard-stat-heading">
+                    <strong className="trainee-dashboard__stat-value">{stat.value}</strong>
+                    <span className="trainee-dashboard__stat-label">{stat.label}</span>
+                  </h2>
                   {stat.onClick && <span className="dashboard-stat-scroll-arrow" aria-hidden="true">↓ View below</span>}
-                </span>
+                </div>
               </Card.Section>
             </Card>
           </Col>

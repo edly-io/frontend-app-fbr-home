@@ -61,7 +61,7 @@ const SessionsAdminLayout = ({ children = null, studioOnly = false }) => {
     return (
       <>
         <HeaderSlot />
-        <main id="main-content" className="d-flex flex-column flex-grow-1">
+        <main id="main" className="d-flex flex-column flex-grow-1">
           <Container size="xl">
             <MovedToStudioPage studioUrl={studioUrl} />
           </Container>
@@ -93,7 +93,7 @@ const SessionsAdminLayout = ({ children = null, studioOnly = false }) => {
   return (
     <>
       <HeaderSlot />
-      <main id="main-content" className="d-flex flex-column flex-grow-1">
+      <main id="main" className="d-flex flex-column flex-grow-1">
         <div className="sessions-program-header">
           <Container size="xl">
 

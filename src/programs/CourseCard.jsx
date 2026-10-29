@@ -140,7 +140,7 @@ const CourseCard = ({ course, isInstructor = false, learnerData = null }) => {
       <div className="course-card__content">
         <div>
           <div className="course-card__header">
-            <h5 className="course-card__title">{displayName}</h5>
+            <h3 className="course-card__title">{displayName}</h3>
             {isInstructor && (
               <span className="badge badge-info course-card__badge">Instructing</span>
             )}

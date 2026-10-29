@@ -8,7 +8,7 @@ import HeaderSlot from '../plugin-slots/HeaderSlot';
 const DashboardShell = ({ children, className, profileSwitcher = null }) => (
   <>
     <HeaderSlot />
-    <main id="main-content" className={className}>
+    <main id="main" className={className}>
       <Container size="xl">
         {profileSwitcher}
         {children}
