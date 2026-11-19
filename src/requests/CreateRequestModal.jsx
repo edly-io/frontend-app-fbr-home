@@ -3,8 +3,9 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Alert, Button, Form, Spinner, StandardModal,
+  Alert, Button, Form, Icon, Spinner, StandardModal,
 } from '@openedx/paragon';
+import { Info } from '@openedx/paragon/icons';
 
 import {
   DatepickerControl,
@@ -450,9 +451,10 @@ const CreateRequestModal = ({
           ))}
         </div>
         {selectableSessions.length < sessions.length && (
-          <p className="text-muted small mt-1 mb-0">
-            Online sessions are greyed out: you already have a Zoom link for them.
-          </p>
+          <div className="d-flex align-items-start text-info small mt-2">
+            <Icon src={Info} size="xs" className="mr-1 mt-1 flex-shrink-0" />
+            <span>Online sessions are greyed out: you already have a Zoom link for them.</span>
+          </div>
         )}
       </div>
     );
