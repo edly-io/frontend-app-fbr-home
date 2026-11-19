@@ -179,7 +179,10 @@ const CreateRequestModal = ({
       try {
         const { sessions: data } = await getCalendarSessions(startDate, toExclusiveEnd(endDate), programKey);
         if (cancelled) { return; }
-        const scheduled = (data || []).filter((s) => s.status === 'scheduled');
+        // An online session already gives everyone on it a Zoom link, so it
+        // can't be requested remotely (the API rejects it too).
+        const scheduled = (data || []).filter((s) => s.status === 'scheduled'
+          && !(typeSlug === REQUEST_TYPE.REMOTE_SESSION && s.create_zoom_meeting));
         setSessions(scheduled);
         setSessionsFetched(true);
         // Full-day leave: auto-select every session in the range

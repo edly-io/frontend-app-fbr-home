@@ -501,3 +501,40 @@ describe('remote session (default type)', () => {
     expect(screen.getByRole('button', { name: /submit/i })).toBeDisabled();
   });
 });
+
+// ─── Online sessions (already on Zoom) ─────────────────────────────────────
+
+describe('online sessions', () => {
+  beforeEach(() => {
+    getCalendarSessions.mockResolvedValue({
+      sessions: [
+        {
+          id: 's1', status: 'scheduled', title: 'Math', create_zoom_meeting: false, scheduled_start_time: '2026-07-13T10:00:00Z',
+        },
+        {
+          id: 's2', status: 'scheduled', title: 'Online Physics', create_zoom_meeting: true, scheduled_start_time: '2026-07-14T10:00:00Z',
+        },
+      ],
+    });
+  });
+
+  const enterDates = () => {
+    fireEvent.change(screen.getByLabelText('Start date'), { target: { value: '13/07/2026' } });
+    fireEvent.change(screen.getByLabelText('End date'), { target: { value: '14/07/2026' } });
+  };
+
+  it('are not offered for a remote session request', async () => {
+    renderModal();
+    enterDates();
+    expect(await screen.findByText(/Math/)).toBeInTheDocument();
+    expect(screen.queryByText(/Online Physics/)).not.toBeInTheDocument();
+  });
+
+  it('are still offered for a session-specific leave', async () => {
+    renderModal();
+    fireEvent.change(screen.getAllByRole('combobox')[0], { target: { value: 'leave' } });
+    fireEvent.click(screen.getByLabelText('Session-specific'));
+    enterDates();
+    expect(await screen.findByText(/Online Physics/)).toBeInTheDocument();
+  });
+});
