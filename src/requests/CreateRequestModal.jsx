@@ -231,7 +231,7 @@ const CreateRequestModal = ({
 
   // An online session already gives everyone on it a Zoom link, so it can't
   // be requested remotely (the API rejects it too). It stays listed, disabled,
-  // so the user sees why it can't be picked.
+  // with one note under the list saying why.
   const isOnlineForRemote = (session) => (
     typeSlug === REQUEST_TYPE.REMOTE_SESSION && session.create_zoom_meeting
   );
@@ -442,22 +442,18 @@ const CreateRequestModal = ({
               key={s.id}
               type="checkbox"
               id={`session-${s.id}`}
-              label={(
-                <>
-                  {`${formatDateTime(s.scheduled_start_time)} · ${s.title}`}
-                  {isOnlineForRemote(s) && (
-                    <span className="text-muted small ml-2">
-                      Online session: you already have a Zoom link
-                    </span>
-                  )}
-                </>
-              )}
+              label={`${formatDateTime(s.scheduled_start_time)} · ${s.title}`}
               checked={selectedSessionIds.includes(s.id)}
               disabled={isOnlineForRemote(s)}
               onChange={() => toggleSession(s.id)}
             />
           ))}
         </div>
+        {selectableSessions.length < sessions.length && (
+          <p className="text-muted small mt-1 mb-0">
+            Online sessions are greyed out: you already have a Zoom link for them.
+          </p>
+        )}
       </div>
     );
   };

@@ -523,13 +523,27 @@ describe('online sessions', () => {
     fireEvent.change(screen.getByLabelText('End date'), { target: { value: '14/07/2026' } });
   };
 
-  it('are listed but disabled, with the reason, for a remote session request', async () => {
+  it('are listed but disabled, with one note, for a remote session request', async () => {
     renderModal();
     enterDates();
     const online = await screen.findByRole('checkbox', { name: /Online Physics/ });
     expect(online).toBeDisabled();
-    expect(online.closest('div')).toHaveTextContent(/you already have a Zoom link/i);
     expect(screen.getByRole('checkbox', { name: /Math/ })).not.toBeDisabled();
+    expect(screen.getAllByText(/you already have a Zoom link/i)).toHaveLength(1);
+  });
+
+  it('show no note when the range has no online session', async () => {
+    getCalendarSessions.mockResolvedValue({
+      sessions: [
+        {
+          id: 's1', status: 'scheduled', title: 'Math', create_zoom_meeting: false, scheduled_start_time: '2026-07-13T10:00:00Z',
+        },
+      ],
+    });
+    renderModal();
+    enterDates();
+    await screen.findByRole('checkbox', { name: /Math/ });
+    expect(screen.queryByText(/you already have a Zoom link/i)).not.toBeInTheDocument();
   });
 
   it('are skipped by Select all for a remote session request', async () => {
