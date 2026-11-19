@@ -523,11 +523,23 @@ describe('online sessions', () => {
     fireEvent.change(screen.getByLabelText('End date'), { target: { value: '14/07/2026' } });
   };
 
-  it('are not offered for a remote session request', async () => {
+  it('are listed but disabled, with the reason, for a remote session request', async () => {
     renderModal();
     enterDates();
-    expect(await screen.findByText(/Math/)).toBeInTheDocument();
-    expect(screen.queryByText(/Online Physics/)).not.toBeInTheDocument();
+    const online = await screen.findByRole('checkbox', { name: /Online Physics/ });
+    expect(online).toBeDisabled();
+    expect(online.closest('div')).toHaveTextContent(/you already have a Zoom link/i);
+    expect(screen.getByRole('checkbox', { name: /Math/ })).not.toBeDisabled();
+  });
+
+  it('are skipped by Select all for a remote session request', async () => {
+    renderModal();
+    enterDates();
+    await screen.findByRole('checkbox', { name: /Online Physics/ });
+    fireEvent.click(screen.getByRole('checkbox', { name: /select all/i }));
+    expect(screen.getByRole('checkbox', { name: /Math/ })).toBeChecked();
+    expect(screen.getByRole('checkbox', { name: /Online Physics/ })).not.toBeChecked();
+    expect(screen.getByRole('checkbox', { name: /deselect all/i })).toBeChecked();
   });
 
   it('are still offered for a session-specific leave', async () => {
@@ -535,6 +547,8 @@ describe('online sessions', () => {
     fireEvent.change(screen.getAllByRole('combobox')[0], { target: { value: 'leave' } });
     fireEvent.click(screen.getByLabelText('Session-specific'));
     enterDates();
-    expect(await screen.findByText(/Online Physics/)).toBeInTheDocument();
+    const online = await screen.findByRole('checkbox', { name: /Online Physics/ });
+    expect(online).not.toBeDisabled();
+    expect(screen.queryByText(/you already have a Zoom link/i)).not.toBeInTheDocument();
   });
 });

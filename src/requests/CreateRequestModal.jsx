@@ -179,10 +179,7 @@ const CreateRequestModal = ({
       try {
         const { sessions: data } = await getCalendarSessions(startDate, toExclusiveEnd(endDate), programKey);
         if (cancelled) { return; }
-        // An online session already gives everyone on it a Zoom link, so it
-        // can't be requested remotely (the API rejects it too).
-        const scheduled = (data || []).filter((s) => s.status === 'scheduled'
-          && !(typeSlug === REQUEST_TYPE.REMOTE_SESSION && s.create_zoom_meeting));
+        const scheduled = (data || []).filter((s) => s.status === 'scheduled');
         setSessions(scheduled);
         setSessionsFetched(true);
         // Full-day leave: auto-select every session in the range
@@ -232,13 +229,22 @@ const CreateRequestModal = ({
     ));
   };
 
-  const isAllSessionsSelected = sessions.length > 0 && selectedSessionIds.length === sessions.length;
+  // An online session already gives everyone on it a Zoom link, so it can't
+  // be requested remotely (the API rejects it too). It stays listed, disabled,
+  // so the user sees why it can't be picked.
+  const isOnlineForRemote = (session) => (
+    typeSlug === REQUEST_TYPE.REMOTE_SESSION && session.create_zoom_meeting
+  );
+  const selectableSessions = sessions.filter((s) => !isOnlineForRemote(s));
+
+  const isAllSessionsSelected = selectableSessions.length > 0
+    && selectedSessionIds.length === selectableSessions.length;
 
   const toggleAllSessions = () => {
     if (isAllSessionsSelected) {
       setSelectedSessionIds([]);
     } else {
-      setSelectedSessionIds(sessions.map((s) => s.id));
+      setSelectedSessionIds(selectableSessions.map((s) => s.id));
     }
   };
 
@@ -419,6 +425,7 @@ const CreateRequestModal = ({
             id="select-all-sessions"
             label={isAllSessionsSelected ? 'Deselect all' : 'Select all'}
             checked={isAllSessionsSelected}
+            disabled={selectableSessions.length === 0}
             onChange={toggleAllSessions}
           />
         </div>
@@ -435,8 +442,18 @@ const CreateRequestModal = ({
               key={s.id}
               type="checkbox"
               id={`session-${s.id}`}
-              label={`${formatDateTime(s.scheduled_start_time)} · ${s.title}`}
+              label={(
+                <>
+                  {`${formatDateTime(s.scheduled_start_time)} · ${s.title}`}
+                  {isOnlineForRemote(s) && (
+                    <span className="text-muted small ml-2">
+                      Online session: you already have a Zoom link
+                    </span>
+                  )}
+                </>
+              )}
               checked={selectedSessionIds.includes(s.id)}
+              disabled={isOnlineForRemote(s)}
               onChange={() => toggleSession(s.id)}
             />
           ))}
