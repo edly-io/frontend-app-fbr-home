@@ -3,8 +3,9 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Alert, Button, Form, Spinner, StandardModal,
+  Alert, Button, Form, Icon, Spinner, StandardModal,
 } from '@openedx/paragon';
+import { Info } from '@openedx/paragon/icons';
 
 import {
   DatepickerControl,
@@ -229,13 +230,22 @@ const CreateRequestModal = ({
     ));
   };
 
-  const isAllSessionsSelected = sessions.length > 0 && selectedSessionIds.length === sessions.length;
+  // An online session already gives everyone on it a Zoom link, so it can't
+  // be requested remotely (the API rejects it too). It stays listed, disabled,
+  // with one note under the list saying why.
+  const isOnlineForRemote = (session) => (
+    typeSlug === REQUEST_TYPE.REMOTE_SESSION && session.create_zoom_meeting
+  );
+  const selectableSessions = sessions.filter((s) => !isOnlineForRemote(s));
+
+  const isAllSessionsSelected = selectableSessions.length > 0
+    && selectedSessionIds.length === selectableSessions.length;
 
   const toggleAllSessions = () => {
     if (isAllSessionsSelected) {
       setSelectedSessionIds([]);
     } else {
-      setSelectedSessionIds(sessions.map((s) => s.id));
+      setSelectedSessionIds(selectableSessions.map((s) => s.id));
     }
   };
 
@@ -416,6 +426,7 @@ const CreateRequestModal = ({
             id="select-all-sessions"
             label={isAllSessionsSelected ? 'Deselect all' : 'Select all'}
             checked={isAllSessionsSelected}
+            disabled={selectableSessions.length === 0}
             onChange={toggleAllSessions}
           />
         </div>
@@ -434,10 +445,17 @@ const CreateRequestModal = ({
               id={`session-${s.id}`}
               label={`${formatDateTime(s.scheduled_start_time)} · ${s.title}`}
               checked={selectedSessionIds.includes(s.id)}
+              disabled={isOnlineForRemote(s)}
               onChange={() => toggleSession(s.id)}
             />
           ))}
         </div>
+        {selectableSessions.length < sessions.length && (
+          <div className="d-flex align-items-start text-info small mt-2">
+            <Icon src={Info} size="xs" className="mr-1 mt-1 flex-shrink-0" />
+            <span>Online sessions are greyed out: you already have a Zoom link for them.</span>
+          </div>
+        )}
       </div>
     );
   };

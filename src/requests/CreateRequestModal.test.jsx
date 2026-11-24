@@ -501,3 +501,68 @@ describe('remote session (default type)', () => {
     expect(screen.getByRole('button', { name: /submit/i })).toBeDisabled();
   });
 });
+
+// ─── Online sessions (already on Zoom) ─────────────────────────────────────
+
+describe('online sessions', () => {
+  beforeEach(() => {
+    getCalendarSessions.mockResolvedValue({
+      sessions: [
+        {
+          id: 's1', status: 'scheduled', title: 'Math', create_zoom_meeting: false, scheduled_start_time: '2026-07-13T10:00:00Z',
+        },
+        {
+          id: 's2', status: 'scheduled', title: 'Online Physics', create_zoom_meeting: true, scheduled_start_time: '2026-07-14T10:00:00Z',
+        },
+      ],
+    });
+  });
+
+  const enterDates = () => {
+    fireEvent.change(screen.getByLabelText('Start date'), { target: { value: '13/07/2026' } });
+    fireEvent.change(screen.getByLabelText('End date'), { target: { value: '14/07/2026' } });
+  };
+
+  it('are listed but disabled, with one note, for a remote session request', async () => {
+    renderModal();
+    enterDates();
+    const online = await screen.findByRole('checkbox', { name: /Online Physics/ });
+    expect(online).toBeDisabled();
+    expect(screen.getByRole('checkbox', { name: /Math/ })).not.toBeDisabled();
+    expect(screen.getAllByText(/you already have a Zoom link/i)).toHaveLength(1);
+  });
+
+  it('show no note when the range has no online session', async () => {
+    getCalendarSessions.mockResolvedValue({
+      sessions: [
+        {
+          id: 's1', status: 'scheduled', title: 'Math', create_zoom_meeting: false, scheduled_start_time: '2026-07-13T10:00:00Z',
+        },
+      ],
+    });
+    renderModal();
+    enterDates();
+    await screen.findByRole('checkbox', { name: /Math/ });
+    expect(screen.queryByText(/you already have a Zoom link/i)).not.toBeInTheDocument();
+  });
+
+  it('are skipped by Select all for a remote session request', async () => {
+    renderModal();
+    enterDates();
+    await screen.findByRole('checkbox', { name: /Online Physics/ });
+    fireEvent.click(screen.getByRole('checkbox', { name: /select all/i }));
+    expect(screen.getByRole('checkbox', { name: /Math/ })).toBeChecked();
+    expect(screen.getByRole('checkbox', { name: /Online Physics/ })).not.toBeChecked();
+    expect(screen.getByRole('checkbox', { name: /deselect all/i })).toBeChecked();
+  });
+
+  it('are still offered for a session-specific leave', async () => {
+    renderModal();
+    fireEvent.change(screen.getAllByRole('combobox')[0], { target: { value: 'leave' } });
+    fireEvent.click(screen.getByLabelText('Session-specific'));
+    enterDates();
+    const online = await screen.findByRole('checkbox', { name: /Online Physics/ });
+    expect(online).not.toBeDisabled();
+    expect(screen.queryByText(/you already have a Zoom link/i)).not.toBeInTheDocument();
+  });
+});
