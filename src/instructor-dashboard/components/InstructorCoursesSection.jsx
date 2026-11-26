@@ -110,6 +110,7 @@ const InstructorCoursesSection = ({ courses }) => {
                           variant="outline-primary"
                           size="sm"
                           iconAfter={ArrowForward}
+                          aria-label={intl.formatMessage(messages.openInLearningFor, { course: course.name })}
                         >
                           {intl.formatMessage(messages.openInLearning)}
                         </Button>

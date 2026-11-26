@@ -7,6 +7,7 @@ import {
   CalendarToday, CheckCircle, Feedback, WorkspacePremium,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import StatCardAction from '../../dashboard/StatCardAction';
 import messages from '../messages';
 
 const DashboardStats = ({ summary, onFeedbackClick = undefined }) => {
@@ -50,7 +51,6 @@ const DashboardStats = ({ summary, onFeedbackClick = undefined }) => {
           <Col xs={12} sm={6} lg={3} key={stat.label} className="mb-3">
             <Card
               className={`trainee-dashboard__stat-card h-100${stat.onClick ? ' dashboard-stat-card--clickable' : ''}`}
-              onClick={stat.onClick}
             >
               <Card.Section>
                 <span className={`trainee-dashboard__stat-icon trainee-dashboard__stat-icon--${stat.variant}`} aria-hidden="true">
@@ -61,7 +61,7 @@ const DashboardStats = ({ summary, onFeedbackClick = undefined }) => {
                     <strong className="trainee-dashboard__stat-value">{stat.value}</strong>
                     <span className="trainee-dashboard__stat-label">{stat.label}</span>
                   </h2>
-                  {stat.onClick && <span className="dashboard-stat-scroll-arrow" aria-hidden="true">↓ View below</span>}
+                  {stat.onClick && <StatCardAction label={stat.label} onClick={stat.onClick} />}
                 </div>
               </Card.Section>
             </Card>

@@ -1,6 +1,7 @@
 @use "@openedx/paragon/styles/css/core/custom-media-breakpoints" as paragonCustomMediaBreakpoints;
 
 .dashboard-stat-card--clickable {
+  position: relative;
   cursor: pointer;
   transition: box-shadow .15s ease, transform .15s ease;
 
@@ -8,6 +9,46 @@
     box-shadow: var(--sessions-card-shadow-hover) !important;
     transform: translateY(-1px);
   }
+
+  &:focus-within {
+    outline: 2px solid var(--pgn-color-primary-500);
+    outline-offset: 2px;
+  }
+}
+
+.dashboard-stat-card__action.btn {
+  position: static;
+  padding: 0;
+  border: 0;
+  min-height: 0;
+  color: var(--sessions-tint-danger-text);
+  font-size: .6875rem;
+  font-weight: 600;
+  text-decoration: none;
+  animation: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  &:focus,
+  &:hover {
+    color: var(--sessions-tint-danger-text);
+    text-decoration: none;
+    box-shadow: none;
+    outline: none;
+  }
+
+  &:focus::before {
+    display: none;
+  }
+}
+
+.dashboard-stat-card__action-text {
+  display: inline-block;
+  animation: dashboard-scroll-bounce 1.6s ease-in-out infinite;
 }
 
 .user-dashboard {

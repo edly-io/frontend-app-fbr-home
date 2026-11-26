@@ -41,7 +41,11 @@ const RequestTypeSection = ({
               {group.count} pending
             </span>
             {reviewUrl && (
-              <a href={reviewUrl} className="btn btn-outline-secondary btn-sm">
+              <a
+                href={reviewUrl}
+                className="btn btn-outline-secondary btn-sm"
+                aria-label={`Review ${label}: ${group.program_name || group.program_key}`}
+              >
                 Review →
               </a>
             )}

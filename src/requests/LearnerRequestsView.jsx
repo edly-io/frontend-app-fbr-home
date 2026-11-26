@@ -23,7 +23,6 @@ import {
   REQUEST_TYPE_VARIANTS,
   RequestDetailCell,
   RequestSummary,
-  SectionHeading,
   useIsBelowLg,
   useModalParams,
 } from '@edly-io/frontend-component-fbr';
@@ -114,6 +113,9 @@ const LearnerRequestsView = ({ lockedType }) => {
 
   const renderActions = useCallback((req) => {
     const isLeave = req.request_type_label === REQUEST_TYPE.LEAVE;
+    const actionLabel = (action) => (
+      req.created ? `${action} request submitted ${formatDateTime(req.created)}` : undefined
+    );
 
     if (req.state === REQUEST_STATUS.PENDING) {
       return (
@@ -122,6 +124,7 @@ const LearnerRequestsView = ({ lockedType }) => {
           size="sm"
           block
           onClick={() => setConfirmAction({ request: req, kind: 'delete' })}
+          aria-label={actionLabel('Delete')}
         >
           Delete
         </Button>
@@ -139,6 +142,7 @@ const LearnerRequestsView = ({ lockedType }) => {
             size="sm"
             block
             onClick={() => setConfirmAction({ request: req, kind: 'withdraw' })}
+            aria-label={actionLabel('Withdraw')}
           >
             Withdraw
           </Button>
@@ -153,6 +157,7 @@ const LearnerRequestsView = ({ lockedType }) => {
           size="sm"
           block
           onClick={() => setConfirmAction({ request: req, kind: 'withdraw' })}
+          aria-label={actionLabel('Withdraw')}
         >
           Withdraw
         </Button>
@@ -216,6 +221,7 @@ const LearnerRequestsView = ({ lockedType }) => {
         return (
           <a href={attachment} target="_blank" rel="noopener noreferrer" className="requests-view__attachment-link">
             {filename}
+            <span className="sr-only"> (opens in new tab)</span>
           </a>
         );
       },
@@ -278,13 +284,13 @@ const LearnerRequestsView = ({ lockedType }) => {
 
       {lockedType === REQUEST_TYPE.LEAVE && (
         <div className="mb-5">
-          <SectionHeading>My Leave Usage</SectionHeading>
+          <h2 className="fbr-section-heading">My Leave Usage</h2>
           <LeaveUsageSummary programKey={programId || ''} />
         </div>
       )}
 
       <div className="mb-4">
-        <SectionHeading>Requests</SectionHeading>
+        <h2 className="fbr-section-heading">Requests</h2>
       </div>
 
       <Row className="requests-filters align-items-end">
@@ -447,6 +453,7 @@ const LearnerRequestsView = ({ lockedType }) => {
                         <MobileRowField label="Attachment">
                           <a href={attachment} target="_blank" rel="noopener noreferrer" className="requests-view__attachment-link">
                             {filename}
+                            <span className="sr-only"> (opens in new tab)</span>
                           </a>
                         </MobileRowField>
                       )}

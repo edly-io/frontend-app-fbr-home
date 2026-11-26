@@ -11,16 +11,17 @@ import { formatDate } from '../utils';
 
 // Absolute links (Studio, for admins) leave the MFE; relative ones stay in it.
 // A null link (Studio URL not configured) renders no button rather than a broken one.
-const SessionLink = ({ href = null }) => {
+const SessionLink = ({ href = null, label }) => {
   if (!href) { return null; }
   if (/^https?:\/\//.test(href)) {
-    return <a href={href} className="btn btn-outline-secondary btn-sm">Mark →</a>;
+    return <a href={href} className="btn btn-outline-secondary btn-sm" aria-label={label}>Mark →</a>;
   }
-  return <Link to={href} className="btn btn-outline-secondary btn-sm">Mark →</Link>;
+  return <Link to={href} className="btn btn-outline-secondary btn-sm" aria-label={label}>Mark →</Link>;
 };
 
 SessionLink.propTypes = {
   href: PropTypes.string,
+  label: PropTypes.string.isRequired,
 };
 
 const AttendanceToMarkCard = ({ sessions, getSessionLink = null }) => {
@@ -69,6 +70,7 @@ const AttendanceToMarkCard = ({ sessions, getSessionLink = null }) => {
                   {session.program_key && (
                     <SessionLink
                       href={getSessionLink ? getSessionLink(session) : `/${session.program_key}/attendance`}
+                      label={intl.formatMessage(messages.markAttendanceFor, { session: session.title })}
                     />
                   )}
                 </div>

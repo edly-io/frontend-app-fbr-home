@@ -2,14 +2,7 @@ import React from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Tab, Tabs } from '@openedx/paragon';
 import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
-
-const SECTIONS = [
-  { slug: 'courses', label: 'Courses' },
-  { slug: 'calendar', label: 'Calendar' },
-  { slug: 'requests', label: 'Requests' },
-  { slug: 'attendance', label: 'Attendance', hideForInstructor: true },
-  { slug: 'certificate', label: 'Certificate', learnerOnly: true },
-];
+import SECTIONS from './sections';
 
 const SectionNav = () => {
   const { programId } = useParams();

@@ -7,6 +7,7 @@ import {
   AccessTime, Feedback, MenuBook,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import StatCardAction from '../../dashboard/StatCardAction';
 import messages from '../messages';
 
 const InstructorStats = ({ summary, onFeedbackClick = undefined }) => {
@@ -40,7 +41,6 @@ const InstructorStats = ({ summary, onFeedbackClick = undefined }) => {
           <Col xs={12} sm={4} className="mb-3" key={stat.label}>
             <Card
               className={`instructor-dashboard__stat-card${stat.onClick ? ' dashboard-stat-card--clickable' : ''}`}
-              onClick={stat.onClick}
             >
               <Card.Section>
                 <span className={`instructor-dashboard__stat-icon instructor-dashboard__stat-icon--${stat.variant}`}>
@@ -51,7 +51,7 @@ const InstructorStats = ({ summary, onFeedbackClick = undefined }) => {
                     <strong className="instructor-dashboard__stat-value">{stat.value}</strong>
                     <span className="instructor-dashboard__stat-label">{stat.label}</span>
                   </h2>
-                  {stat.onClick && <span className="dashboard-stat-scroll-arrow" aria-hidden="true">↓ View below</span>}
+                  {stat.onClick && <StatCardAction label={stat.label} onClick={stat.onClick} />}
                 </div>
               </Card.Section>
             </Card>

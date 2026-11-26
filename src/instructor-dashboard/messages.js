@@ -42,6 +42,16 @@ const messages = defineMessages({
   averageLearnerProgress: { id: 'sessions.instructorDashboard.averageLearnerProgress', defaultMessage: 'Average learner progress' },
   courseAverageProgress: { id: 'sessions.instructorDashboard.courseAverageProgress', defaultMessage: '{course}: {percentage}% average learner progress' },
   openInLearning: { id: 'sessions.instructorDashboard.openInLearning', defaultMessage: 'Open in Learning' },
+  openInLearningFor: {
+    id: 'sessions.instructorDashboard.openInLearningFor',
+    defaultMessage: 'Open in Learning: {course} (opens in a new tab)',
+    description: 'Accessible name of the Open in Learning link on a course card.',
+  },
+  markAttendanceFor: {
+    id: 'sessions.instructorDashboard.markAttendanceFor',
+    defaultMessage: 'Mark attendance for {session}',
+    description: 'Accessible name of the Mark link for one session that needs attendance.',
+  },
   deliverySummary: { id: 'sessions.instructorDashboard.deliverySummary', defaultMessage: 'Delivery so far' },
   deliverySubtitle: { id: 'sessions.instructorDashboard.deliverySubtitle', defaultMessage: 'Sessions completed and hours taught' },
   deliveryHeadline: { id: 'sessions.instructorDashboard.deliveryHeadline', defaultMessage: '{sessions} sessions delivered' },

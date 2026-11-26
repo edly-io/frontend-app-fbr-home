@@ -5,6 +5,7 @@ import { FooterSlot } from '@edx/frontend-component-footer';
 import { Container, Spinner } from '@openedx/paragon';
 import HeaderSlot from '../plugin-slots/HeaderSlot';
 import { useCertificateVerification } from '../app/hooks';
+import usePageTitle from '../app/usePageTitle';
 import CertificateView from './CertificateView';
 import './certificate.scss';
 
@@ -23,6 +24,7 @@ PublicLayout.propTypes = { children: PropTypes.node.isRequired };
 
 /** Public certificate page: what a certificate's QR code opens. */
 const CertificateVerifyPage = () => {
+  usePageTitle('Certificate verification');
   const { certificateNumber } = useParams();
   const { verification, loading, error } = useCertificateVerification(certificateNumber);
 

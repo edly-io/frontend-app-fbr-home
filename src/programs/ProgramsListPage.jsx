@@ -10,6 +10,7 @@ import HeaderSlot from '../plugin-slots/HeaderSlot';
 import { getStudioProgramUrl } from '../app/studioUrls';
 import ProgramCard from './ProgramCard';
 import { usePrograms } from '../app/hooks';
+import usePageTitle from '../app/usePageTitle';
 
 const STATUS_OPTIONS = [
   { value: 'draft', label: 'Draft' },
@@ -33,6 +34,7 @@ const SORT_OPTIONS = [
 ];
 
 const ProgramsListPage = () => {
+  usePageTitle('My Programs');
   const { data: config } = useConfig();
   // Admins manage programs in Studio, so their cards open the program there.
   const isAdmin = config?.user_role === USER_ROLE.ADMIN;
