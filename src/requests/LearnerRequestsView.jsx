@@ -276,6 +276,7 @@ const LearnerRequestsView = ({ lockedType }) => {
 
   return (
     <Container className="py-3">
+      <div role="status" className="sr-only">{`${count} ${count === 1 ? 'request' : 'requests'}`}</div>
       {error && (
         <Alert variant="danger" dismissible onClose={() => setError('')}>
           {error}

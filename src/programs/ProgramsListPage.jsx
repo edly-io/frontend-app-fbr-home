@@ -232,6 +232,9 @@ const ProgramsListPage = () => {
             </div>
           )}
 
+          <div role="status" className="sr-only">
+            {!loading && !error && `${count} ${count === 1 ? 'program' : 'programs'} found`}
+          </div>
           {renderBody()}
         </div>
       </main>
