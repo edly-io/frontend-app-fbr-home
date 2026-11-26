@@ -13,8 +13,10 @@ import { useConfig, USER_ROLE } from '@edly-io/frontend-component-fbr';
 import HeaderSlot from '../plugin-slots/HeaderSlot';
 import MovedToStudioPage from './MovedToStudioPage';
 import SectionNav from './SectionNav';
+import SECTIONS from './sections';
 import { getStudioProgramUrl } from './studioUrls';
 import { useProgram } from './hooks';
+import usePageTitle from './usePageTitle';
 
 const STATUS_VARIANTS = {
   active: 'success',
@@ -49,6 +51,8 @@ const SessionsAdminLayout = ({ children = null, studioOnly = false }) => {
   // Admins do all program work in Studio: send them to the same page there.
   // Read positionally, like SectionNav: `programId` carries `:` and `+`.
   const subPath = pathname.split('/').filter(Boolean).slice(1).join('/');
+  const sectionLabel = SECTIONS.find(({ slug }) => slug === subPath.split('/')[0])?.label;
+  usePageTitle(sectionLabel, program?.name);
   const studioUrl = isAdmin ? getStudioProgramUrl(programId, subPath, search) : null;
 
   useEffect(() => {

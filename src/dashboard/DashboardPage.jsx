@@ -9,8 +9,10 @@ import AdminDashboardView from '../admin-dashboard/AdminDashboardView';
 import InstructorDashboardPage from '../instructor-dashboard/InstructorDashboardPage';
 import TraineeDashboardPage from '../trainee-dashboard/TraineeDashboardPage';
 import useMyFbrRoles from '../app/useMyFbrRoles';
+import usePageTitle from '../app/usePageTitle';
 
 const DashboardPage = () => {
+  usePageTitle('Home');
   const { roles, isLoading: rolesLoading } = useMyFbrRoles();
   const { data: config, isLoading: configLoading, isError: configError } = useConfig();
   const [activeView, setActiveView] = useState('instructor');

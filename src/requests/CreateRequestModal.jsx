@@ -263,6 +263,9 @@ const CreateRequestModal = ({
   // ── Validation ──
 
   const isFullDayLeave = typeSlug === REQUEST_TYPE.LEAVE && leaveMode === 'full_day';
+  const dateRangeError = startDate && endDate && startDate > endDate
+    ? 'Choose an end date on or after the start date.'
+    : '';
 
   const requiresAttachment = typeSlug === REQUEST_TYPE.LEAVE
     && (leaveCategory === 'MED' || leaveCategory === 'EMER');
@@ -622,9 +625,10 @@ const CreateRequestModal = ({
       {/* Leave category */}
       {typeSlug === REQUEST_TYPE.LEAVE && (
         <Form.Group className="mb-3">
-          <Form.Label>Leave category <span className="text-danger">*</span></Form.Label>
+          <Form.Label>Leave category <span className="text-danger" aria-hidden="true">*</span></Form.Label>
           <Form.Control
             as="select"
+            aria-required="true"
             value={leaveCategory}
             onChange={(e) => setLeaveCategory(e.target.value)}
           >
@@ -656,8 +660,8 @@ const CreateRequestModal = ({
       {/* Leave mode selector */}
       {typeSlug === REQUEST_TYPE.LEAVE && (
         <Form.Group className="mb-3">
-          <Form.Label>Leave type</Form.Label>
-          <div className="d-flex" style={{ gap: 16 }}>
+          <Form.Label id="leave-mode-label">Leave type</Form.Label>
+          <div className="d-flex" style={{ gap: 16 }} role="radiogroup" aria-labelledby="leave-mode-label">
             <Form.Check
               type="radio"
               id="leave-mode-full-day"
@@ -680,9 +684,15 @@ const CreateRequestModal = ({
 
       {/* Date range */}
       <Form.Group className="mb-3">
-        <Form.Label>Date range</Form.Label>
-        <div className="d-flex align-items-center" style={{ gap: 8 }}>
+        <Form.Label id="request-date-range-label">Date range</Form.Label>
+        <div
+          className="d-flex align-items-center"
+          style={{ gap: 8 }}
+          role="group"
+          aria-labelledby="request-date-range-label"
+        >
           <DatepickerControl
+            id="request-start-date"
             value={startDate}
             onChange={handleStartDateChange}
             className="flex-fill"
@@ -690,14 +700,22 @@ const CreateRequestModal = ({
           />
           <span style={{ color: '#6c757d' }}>–</span>
           <DatepickerControl
+            id="request-end-date"
             value={endDate}
             minDate={startDate}
             onChange={handleEndDateChange}
             className="flex-fill"
             ariaLabel="End date"
+            isInvalid={!!dateRangeError}
+            helpText={dateRangeError}
           />
           {sessionsLoading && <Spinner animation="border" size="sm" />}
         </div>
+        {dateRangeError && (
+          <Form.Control.Feedback type="invalid" id="request-end-date-help-text" className="d-block">
+            {dateRangeError}
+          </Form.Control.Feedback>
+        )}
       </Form.Group>
 
       {/* Full-day leave: heads-up that the selected range covers scheduled
@@ -729,18 +747,21 @@ const CreateRequestModal = ({
       {/* Session list — session-specific leave and remote_session only */}
       {!isFullDayLeave && (
         <Form.Group className="mb-3">
-          <Form.Label>Select sessions</Form.Label>
-          {renderSessionList()}
+          <Form.Label id="request-sessions-label">Select sessions</Form.Label>
+          <div role="group" aria-labelledby="request-sessions-label">
+            {renderSessionList()}
+          </div>
         </Form.Group>
       )}
 
       {/* Reason */}
       <Form.Group className="mb-3">
         <Form.Label>
-          Reason <span className="text-danger">*</span>
+          Reason <span className="text-danger" aria-hidden="true">*</span>
         </Form.Label>
         <Form.Control
           as="textarea"
+          aria-required="true"
           rows={3}
           value={reason}
           onChange={(e) => setReason(e.target.value)}
@@ -755,11 +776,12 @@ const CreateRequestModal = ({
           Attachment
           {' '}
           {requiresAttachment
-            ? <span className="text-danger">*</span>
+            ? <span className="text-danger" aria-hidden="true">*</span>
             : <small className="text-muted">(optional)</small>}
         </Form.Label>
         <Form.Control
           type="file"
+          aria-required={requiresAttachment}
           onChange={(e) => setAttachment(e.target.files?.[0] ?? null)}
           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
         />
@@ -772,6 +794,7 @@ const CreateRequestModal = ({
               size="sm"
               className="p-0 ml-1"
               onClick={() => setAttachment(null)}
+              aria-label={`Remove ${attachment.name}`}
             >
               Remove
             </Button>

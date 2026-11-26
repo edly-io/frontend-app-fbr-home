@@ -16,6 +16,7 @@ import PendingRequestsCard from './components/PendingRequestsCard';
 import useAdminDashboard from './useAdminDashboard';
 import './admin-dashboard.scss';
 import '../dashboard/dashboard.scss';
+import StatCardAction from '../dashboard/StatCardAction';
 
 const scrollTo = id => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
@@ -118,10 +119,7 @@ const AdminDashboardView = () => {
       <Row className="admin-dashboard__stats mb-3">
         {statCards.map(stat => (
           <Col xs={12} sm={6} lg={3} className="mb-3" key={stat.label}>
-            <Card
-              className={stat.showArrow ? 'dashboard-stat-card--clickable' : undefined}
-              onClick={stat.showArrow ? () => scrollTo(stat.scrollId) : undefined}
-            >
+            <Card className={stat.showArrow ? 'dashboard-stat-card--clickable' : undefined}>
               <Card.Section className="admin-dashboard__stat-card">
                 <span className={`admin-dashboard__stat-icon${stat.variant ? ` admin-dashboard__stat-icon${stat.variant}` : ''}`}>
                   <Icon src={stat.icon} />
@@ -131,7 +129,11 @@ const AdminDashboardView = () => {
                     <strong className="admin-dashboard__stat-value">{stat.value}</strong>
                     <span className="admin-dashboard__stat-label">{stat.label}</span>
                   </h2>
-                  <span className={`dashboard-stat-scroll-arrow${stat.showArrow ? '' : ' dashboard-stat-scroll-arrow--hidden'}`} aria-hidden="true">↓ View below</span>
+                  {stat.showArrow ? (
+                    <StatCardAction label={stat.label} onClick={() => scrollTo(stat.scrollId)} />
+                  ) : (
+                    <span className="dashboard-stat-scroll-arrow dashboard-stat-scroll-arrow--hidden" aria-hidden="true">↓ View below</span>
+                  )}
                 </div>
               </Card.Section>
             </Card>
@@ -182,7 +184,11 @@ const AdminDashboardView = () => {
                         </p>
                       </div>
                       {sessionUrl && (
-                        <a href={sessionUrl} className="btn btn-outline-secondary btn-sm">
+                        <a
+                          href={sessionUrl}
+                          className="btn btn-outline-secondary btn-sm"
+                          aria-label={`View ${session.title}`}
+                        >
                           View →
                         </a>
                       )}

@@ -40,7 +40,7 @@ const ProgramCertificatePage = () => {
     );
   }
 
-  return <CertificateView certificateNumber={certificateNumber} verification={verification} />;
+  return <CertificateView certificateNumber={certificateNumber} verification={verification} headingLevel={2} />;
 };
 
 export default ProgramCertificatePage;

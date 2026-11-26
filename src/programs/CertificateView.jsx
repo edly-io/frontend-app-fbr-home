@@ -90,13 +90,14 @@ DownloadPdfButton.propTypes = {
  * certificate and its PDF when valid, a generic message otherwise. Shared by
  * the public verify page and the trainee's program Certificate tab.
  */
-const CertificateView = ({ certificateNumber, verification }) => {
+const CertificateView = ({ certificateNumber, verification, headingLevel }) => {
+  const Heading = `h${headingLevel}`;
   // Anything but a valid certificate (revoked or unknown) gets the same generic
   // message: the public page never says who held a certificate or why it fails.
   if (!verification.valid) {
     return (
       <div className="trainee-cert-page">
-        <h1 className="h3">Certificate verification</h1>
+        <Heading className="h3">Certificate verification</Heading>
         <p className="mb-0">
           This certificate could not be verified. Please check the link or contact
           the issuing organisation.
@@ -108,7 +109,7 @@ const CertificateView = ({ certificateNumber, verification }) => {
     <div className="trainee-cert-page">
       <div className="cert-verify-summary">
         <div className="cert-verify-summary__heading">
-          <h1 className="h3 mb-0">Certificate verification</h1>
+          <Heading className="h3 mb-0">Certificate verification</Heading>
           <Badge variant="success">Valid</Badge>
         </div>
         <CertificateDetails certificateNumber={certificateNumber} verification={verification} />
@@ -116,7 +117,7 @@ const CertificateView = ({ certificateNumber, verification }) => {
       <div className="trainee-cert-toolbar">
         <DownloadPdfButton pdfUrl={verification.pdfUrl} certificateNumber={certificateNumber} />
       </div>
-      <CertificateHtmlView html={verification.html} />
+      <CertificateHtmlView html={verification.html} headingLevel={headingLevel + 1} />
     </div>
   );
 };
@@ -128,6 +129,11 @@ CertificateView.propTypes = {
     html: PropTypes.string,
     pdfUrl: PropTypes.string,
   }).isRequired,
+  headingLevel: PropTypes.oneOf([1, 2]),
+};
+
+CertificateView.defaultProps = {
+  headingLevel: 1,
 };
 
 export default CertificateView;

@@ -10,6 +10,7 @@ import HeaderSlot from '../plugin-slots/HeaderSlot';
 import { getStudioProgramUrl } from '../app/studioUrls';
 import ProgramCard from './ProgramCard';
 import { usePrograms } from '../app/hooks';
+import usePageTitle from '../app/usePageTitle';
 
 const STATUS_OPTIONS = [
   { value: 'draft', label: 'Draft' },
@@ -33,6 +34,7 @@ const SORT_OPTIONS = [
 ];
 
 const ProgramsListPage = () => {
+  usePageTitle('My Programs');
   const { data: config } = useConfig();
   // Admins manage programs in Studio, so their cards open the program there.
   const isAdmin = config?.user_role === USER_ROLE.ADMIN;
@@ -176,21 +178,24 @@ const ProgramsListPage = () => {
                   className={`programs-refine__btn${activeRefineCount > 0 ? ' programs-refine__btn--active' : ''}`}
                   onClick={() => setRefineOpen((o) => !o)}
                   aria-expanded={refineOpen}
-                  aria-haspopup="true"
+                  aria-haspopup="dialog"
                 >
                   <svg className="programs-refine__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z" />
                   </svg>
                   Refine
                   {activeRefineCount > 0 && (
-                    <span className="programs-refine__badge">{activeRefineCount}</span>
+                    <span className="programs-refine__badge">
+                      {activeRefineCount}
+                      <span className="sr-only"> active</span>
+                    </span>
                   )}
                 </button>
 
                 {refineOpen && (
                   <div className="programs-refine__panel" role="dialog" aria-label="Refine programs">
-                    <div className="programs-refine__col">
-                      <p className="programs-refine__heading">Program Status</p>
+                    <div className="programs-refine__col" role="group" aria-labelledby="programs-refine-status">
+                      <p className="programs-refine__heading" id="programs-refine-status">Program Status</p>
                       {STATUS_OPTIONS.map(({ value, label }) => (
                         <label key={value} className="programs-refine__row">
                           <input
@@ -206,8 +211,8 @@ const ProgramsListPage = () => {
 
                     <div className="programs-refine__divider" />
 
-                    <div className="programs-refine__col">
-                      <p className="programs-refine__heading">Sort</p>
+                    <div className="programs-refine__col" role="radiogroup" aria-labelledby="programs-refine-sort">
+                      <p className="programs-refine__heading" id="programs-refine-sort">Sort</p>
                       {SORT_OPTIONS.map(({ value, label }) => (
                         <label key={value} className="programs-refine__row">
                           <input
@@ -227,6 +232,9 @@ const ProgramsListPage = () => {
             </div>
           )}
 
+          <div role="status" className="sr-only">
+            {!loading && !error && `${count} ${count === 1 ? 'program' : 'programs'} found`}
+          </div>
           {renderBody()}
         </div>
       </main>
