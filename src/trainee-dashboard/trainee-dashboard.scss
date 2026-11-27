@@ -54,7 +54,7 @@
     align-items: center;
     padding: .375rem .625rem;
     color: var(--sessions-on-brand);
-    background: var(--sessions-on-brand-fill);
+    background: var(--sessions-on-brand-panel);
     border: 0;
 
     &.program-badge {
@@ -78,7 +78,7 @@
 
 .trainee-dashboard__active-label {
   align-self: center;
-  color: var(--sessions-on-brand-subtle);
+  color: var(--sessions-on-brand-muted);
   font-size: .75rem;
   font-weight: 500;
   white-space: nowrap;
@@ -91,7 +91,7 @@
   color: var(--sessions-on-brand);
   font-size: .8125rem;
   font-weight: 600;
-  background: var(--sessions-on-brand-fill);
+  background: var(--sessions-on-brand-panel);
   border: 1px solid var(--sessions-on-brand-border);
   border-radius: 999px;
   text-decoration: none;
@@ -100,7 +100,7 @@
   &:hover,
   &:focus {
     color: var(--sessions-on-brand);
-    background: var(--sessions-on-brand-fill-strong);
+    background: var(--sessions-on-brand-panel-strong);
     text-decoration: none;
   }
 }
@@ -115,6 +115,9 @@
 .trainee-dashboard__timeline {
   flex: 0 1 17rem;
   min-width: 15rem;
+  padding: .875rem 1rem;
+  background: var(--sessions-on-brand-panel);
+  border-radius: .75rem;
 
   .progress {
     background: var(--sessions-on-brand-fill);
