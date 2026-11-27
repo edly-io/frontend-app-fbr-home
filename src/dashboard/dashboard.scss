@@ -210,11 +210,14 @@
   z-index: 2;
   right: 22px;
   bottom: 12px;
-  color: var(--sessions-on-brand-subtle);
+  padding: .125rem .5rem;
+  color: var(--sessions-on-brand);
   font-size: .6563rem;
   font-weight: 600;
   letter-spacing: .075rem;
   text-transform: uppercase;
+  background: var(--sessions-on-brand-panel);
+  border-radius: 999px;
 }
 
 @media (--pgn-size-breakpoint-max-width-md) {

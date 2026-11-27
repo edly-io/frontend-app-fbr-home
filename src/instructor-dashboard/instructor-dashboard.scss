@@ -60,7 +60,7 @@
     align-items: center;
     padding: .375rem .625rem;
     color: var(--sessions-on-brand);
-    background: var(--sessions-on-brand-fill);
+    background: var(--sessions-on-brand-panel);
     border: 0;
 
     .pgn__icon {
@@ -96,7 +96,7 @@
   margin: 0;
   overflow: hidden;
   text-align: center;
-  background: var(--sessions-on-brand-fill);
+  background: var(--sessions-on-brand-panel);
   border: 1px solid var(--sessions-on-brand-border);
   border-radius: .75rem;
 
